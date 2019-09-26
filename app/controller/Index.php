@@ -2,6 +2,7 @@
 namespace app\controller;
 
 use app\BaseController;
+USE app\model\User;
 
 class Index extends BaseController
 {
@@ -13,5 +14,15 @@ class Index extends BaseController
     public function hello($name = 'ThinkPHP6')
     {
         return 'hello,' . $name;
+    }
+
+    /**
+     * @return 测试
+     */
+    public function getTest()
+    {
+        $list = User::select();
+        $this->assign('list',  $list);
+        return $this->fetch();
     }
 }
