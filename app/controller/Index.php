@@ -22,7 +22,7 @@ class Index extends BaseController
     public function getTest()
     {
         $list = User::select();
-        $this->assign('list',  $list);
-        return $this->view->fetch();
+        $this->view->assign('list',  $list);
+        return $this->view->fetch('test');
     }
 }
