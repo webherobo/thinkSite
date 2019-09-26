@@ -23,6 +23,6 @@ class Index extends BaseController
     {
         $list = User::select();
         $this->assign('list',  $list);
-        return $this->fetch();
+        return $this->view->fetch();
     }
 }
