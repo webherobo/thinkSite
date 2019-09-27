@@ -4,7 +4,7 @@ namespace app\model;
 
 use think\Model;
 //Db::name('user')->where('id','>',10)->select();
-//User::where('id','>',10)->select();
+//UserValidate::where('id','>',10)->select();
 class User extends Model
 {
     //protected $name = 'user';//模型名（相当于不带数据表前后缀的表名，默认为当前模型类名）
@@ -34,19 +34,19 @@ class User extends Model
     //    ];
     //
     //$user->data($data, true, ['name','score']);//模型赋值表示只设置data数组的name和score数据。第二个参数支持使用修改器
-    //新增$user->allowField(['name', 'email'])->save();$user->saveAll($list);$user = User::create([ 'name'  =>  'thinkphp', 'email' =>  'thinkphp@qq.com'], ['name', 'email']);
-    //强制更新$user->force()->save();User::update(['name' => 'thinkphp'], ['id' => 1]);
+    //新增$user->allowField(['name', 'email'])->save();$user->saveAll($list);$user = UserValidate::create([ 'name'  =>  'thinkphp', 'email' =>  'thinkphp@qq.com'], ['name', 'email']);
+    //强制更新$user->force()->save();UserValidate::update(['name' => 'thinkphp'], ['id' => 1]);
     //删除$user->delete();根据主键删除User::destroy(1);
-    //查询User::find(1);$list = User::select([1,2,3]);User::where('status',1)->column('name');User::getByName('thinkphp');
+    //查询User::find(1);$list = UserValidate::select([1,2,3]);UserValidate::where('status',1)->column('name');UserValidate::getByName('thinkphp');
     //范围查询User::scope('thinkphp')->find();
     //数据分批处理
-    //User::chunk(100, function ($users) {
+    //UserValidate::chunk(100, function ($users) {
     //    foreach($users as $user){
     //        // 处理user模型对象
     //    }
     //});
     //使用游标查询
-    //foreach(User::where('status', 1)->cursor() as $user){
+    //foreach(UserValidate::where('status', 1)->cursor() as $user){
     //echo $user->name;
     //}//
    //模型的序列化输出操作（$model->toArray()及toJson()）；

@@ -1,8 +1,11 @@
 <?php
+
 namespace app\controller;
 
 use app\BaseController;
 USE app\model\User;
+USE app\validate\UserValidate;
+use think\exception\ValidateException;
 
 class Index extends BaseController
 {
@@ -21,8 +24,60 @@ class Index extends BaseController
      */
     public function getTest()
     {
-        $list = User::select();
-        $this->view->assign('list',  $list);
+        try {
+            validate(User::class)->check([
+                'name' => 'thinkphp',
+                'email' => 'thinkphp@qq.com',
+            ]);
+        } catch (ValidateException $e) {
+            // 验证失败 输出错误信息
+            dump($e->getError());
+        }
+        //批量验证
+        try {
+            $result = validate(User::class)->batch(true)->check([
+                'name' => 'thinkphp',
+                'email' => 'thinkphp@qq.com',
+            ]);
+
+            if (true !== $result) {
+                // 验证失败 输出错误信息
+                dump($result);
+            }
+        } catch (ValidateException $e) {
+            // 验证失败 输出错误信息
+            dump($e->getError());
+        }
+
+
+        $list = UserValidate::select();
+        $this->view->assign('list', $list);
         return $this->view->fetch('test');
+    }
+
+    public function upload()
+    {
+        // 获取表单上传文件 例如上传了001.jpg
+        $files = request()->file('image');
+        if (count($files)) {
+            // 上传到本地服务器
+            $savename = \think\facade\Filesystem::putFile('topic', $files);
+
+        } else {
+            //多文件
+            try {
+                validate(['image' => 'filesize:10240|fileExt:jpg|image:200,200,jpg'])
+                    ->check($files);
+                $savename = [];
+                foreach ($files as $file) {
+                    $savename[] = \think\facade\Filesystem::putFile('topic', $file);
+                }
+            } catch (think\exception\ValidateException $e) {
+                echo $e->getMessage();
+            }
+
+        }
+
+
     }
 }
