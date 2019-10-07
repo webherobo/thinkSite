@@ -6,6 +6,7 @@ use app\BaseController;
 USE app\model\User;
 USE app\validate\UserValidate;
 use think\exception\ValidateException;
+use think\facade\View;//门面
 
 class Index extends BaseController
 {
@@ -36,9 +37,11 @@ class Index extends BaseController
             dump($e->getError());
         }
 
-        $list = User::select();
-        $this->view->assign('list', $list);
-        return $this->view->fetch('test');
+        $list = User::select()->toArray();
+		var_dump(view('test', ["list"=>$list]));
+		return view('test', ["list"=>$list]);//助手
+        //$this->view->assign('list', $list);
+        //return $this->view->fetch('test');
     }
 
     public function upload()
