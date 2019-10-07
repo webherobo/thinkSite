@@ -548,7 +548,7 @@ class Route
      */
     public function group($name, $route = null): RuleGroup
     {
-        if ($name instanceof \Closure) {
+        if ($name instanceof Closure) {
             $route = $name;
             $name  = '';
         }
@@ -740,7 +740,7 @@ class Route
         $this->init();
 
         if ($withRoute) {
-            $checkCallback = function () use ($request, $withRoute) {
+            $checkCallback = function () use ($withRoute) {
                 //加载路由
                 $withRoute();
                 return $this->check();
@@ -759,7 +759,7 @@ class Route
 
         $dispatch->init($this->app);
 
-        return $this->app->middleware->pipeline()
+        return $this->app->middleware->pipeline('route')
             ->send($request)
             ->then(function () use ($dispatch) {
                 return $dispatch->run();
@@ -913,7 +913,7 @@ class Route
      */
     public function buildUrl(string $url = '', array $vars = []): UrlBuild
     {
-        return new UrlBuild($this, $this->app, $url, $vars);
+        return $this->app->make(UrlBuild::class, [$this, $this->app, $url, $vars], true);
     }
 
     /**
