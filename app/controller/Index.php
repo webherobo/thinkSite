@@ -39,11 +39,11 @@ class Index extends BaseController
 
         $list = User::select()->toArray();
 		//var_dump(view('test', ["list"=>$list]));
-		View::assign(["list"=>$list]);
-		return View::fetch('test');
+		//View::assign(["list"=>$list]);
+		//return View::fetch('test');
 		//return view('test', ["list"=>$list]);//助手
-        //$this->view->assign('list', $list);
-        //return $this->view->fetch('test');
+        $this->view->assign('list', $list);
+        return $this->view->fetch('test');
     }
 
     public function upload()
