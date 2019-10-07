@@ -25,7 +25,7 @@ class Index extends BaseController
     public function getTest()
     {
         try {
-            validate(User::class)->check([
+            validate(UserValidate::class)->check([
                 'name' => 'thinkphp',
                 'email' => 'thinkphp@qq.com',
             ]);
@@ -35,7 +35,7 @@ class Index extends BaseController
         }
         //批量验证
         try {
-            $result = validate(User::class)->batch(true)->check([
+            $result = validate(UserValidate::class)->batch(true)->check([
                 'name' => 'thinkphp',
                 'email' => 'thinkphp@qq.com',
             ]);
