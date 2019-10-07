@@ -25,32 +25,18 @@ class Index extends BaseController
     public function getTest()
     {
         try {
-            validate(User::class)->check([
+            //批量验证
+            validate(UserValidate::class)->scene('edit')->batch(true)->check([
                 'name' => 'thinkphp',
+                'age' => 100,
                 'email' => 'thinkphp@qq.com',
             ]);
         } catch (ValidateException $e) {
             // 验证失败 输出错误信息
             dump($e->getError());
         }
-        //批量验证
-        try {
-            $result = validate(User::class)->batch(true)->check([
-                'name' => 'thinkphp',
-                'email' => 'thinkphp@qq.com',
-            ]);
 
-            if (true !== $result) {
-                // 验证失败 输出错误信息
-                dump($result);
-            }
-        } catch (ValidateException $e) {
-            // 验证失败 输出错误信息
-            dump($e->getError());
-        }
-
-
-        $list = UserValidate::select();
+        $list = User::select();
         $this->view->assign('list', $list);
         return $this->view->fetch('test');
     }
