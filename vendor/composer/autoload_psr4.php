@@ -6,17 +6,25 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'think\\worker\\' => array($vendorDir . '/topthink/think-worker/src'),
     'think\\view\\driver\\' => array($vendorDir . '/topthink/think-view/src'),
+    'think\\swoole\\' => array($vendorDir . '/topthink/think-swoole/src'),
+    'think\\migration\\' => array($vendorDir . '/topthink/think-migration/src'),
+    'think\\captcha\\' => array($vendorDir . '/topthink/think-captcha/src'),
     'think\\' => array($vendorDir . '/topthink/framework/src/think', $vendorDir . '/topthink/think-helper/src', $vendorDir . '/topthink/think-orm/src', $vendorDir . '/topthink/think-template/src'),
     'app\\' => array($baseDir . '/app'),
+    'Workerman\\' => array($vendorDir . '/workerman/workerman'),
     'Symfony\\Polyfill\\Php72\\' => array($vendorDir . '/symfony/polyfill-php72'),
     'Symfony\\Polyfill\\Mbstring\\' => array($vendorDir . '/symfony/polyfill-mbstring'),
     'Symfony\\Component\\VarDumper\\' => array($vendorDir . '/symfony/var-dumper'),
+    'Symfony\\Component\\Finder\\' => array($vendorDir . '/symfony/finder'),
     'Psr\\SimpleCache\\' => array($vendorDir . '/psr/simple-cache/src'),
     'Psr\\Log\\' => array($vendorDir . '/psr/log/Psr/Log'),
     'Psr\\Container\\' => array($vendorDir . '/psr/container/src'),
     'Psr\\Cache\\' => array($vendorDir . '/psr/cache/src'),
+    'Phinx\\' => array($vendorDir . '/topthink/think-migration/phinx/src/Phinx'),
     'Opis\\Closure\\' => array($vendorDir . '/opis/closure/src'),
     'League\\Flysystem\\Cached\\' => array($vendorDir . '/league/flysystem-cached-adapter/src'),
     'League\\Flysystem\\' => array($vendorDir . '/league/flysystem/src'),
+    'GatewayWorker\\' => array($vendorDir . '/workerman/gateway-worker/src'),
 );

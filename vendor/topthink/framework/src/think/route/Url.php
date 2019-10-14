@@ -241,6 +241,14 @@ class Url
         } elseif (0 === strpos($url, '@')) {
             // 解析到控制器
             $url = substr($url, 1);
+        } else {
+            $controller = $request->controller();
+
+            $path       = explode('/', $url);
+            $action     = array_pop($path);
+            $controller = empty($path) ? $controller : array_pop($path);
+
+            $url = $controller . '/' . $action;
         }
 
         return $url;
@@ -289,6 +297,7 @@ class Url
         if (is_string($allowDomain) && false === strpos($allowDomain, '.')) {
             $allowDomain .= '.' . $request->rootDomain();
         }
+        $port = $request->port();
 
         foreach ($rule as $item) {
             $url     = $item->getRule();
@@ -304,8 +313,8 @@ class Url
                 continue;
             }
 
-            if (!in_array($request->port(), [80, 443])) {
-                $domain .= ':' . $request->port();
+            if ($port && !in_array($port, [80, 443])) {
+                $domain .= ':' . $port;
             }
 
             if (empty($pattern)) {

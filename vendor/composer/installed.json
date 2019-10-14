@@ -1,17 +1,17 @@
 [
     {
         "name": "league/flysystem",
-        "version": "1.0.55",
-        "version_normalized": "1.0.55.0",
+        "version": "1.0.56",
+        "version_normalized": "1.0.56.0",
         "source": {
             "type": "git",
             "url": "https://github.com/thephpleague/flysystem.git",
-            "reference": "33c91155537c6dc899eacdc54a13ac6303f156e6"
+            "reference": "90e3f83cb10ef6b058d70f95267030e7a6236518"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/33c91155537c6dc899eacdc54a13ac6303f156e6",
-            "reference": "33c91155537c6dc899eacdc54a13ac6303f156e6",
+            "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/90e3f83cb10ef6b058d70f95267030e7a6236518",
+            "reference": "90e3f83cb10ef6b058d70f95267030e7a6236518",
             "shasum": ""
         },
         "require": {
@@ -41,7 +41,7 @@
             "spatie/flysystem-dropbox": "Allows you to use Dropbox storage",
             "srmklive/flysystem-dropbox-v2": "Allows you to use Dropbox storage for PHP 5 applications"
         },
-        "time": "2019-08-24T11:17:19+00:00",
+        "time": "2019-10-12T13:05:59+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -396,6 +396,57 @@
         ]
     },
     {
+        "name": "symfony/finder",
+        "version": "v4.3.5",
+        "version_normalized": "4.3.5.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/symfony/finder.git",
+            "reference": "5e575faa95548d0586f6bedaeabec259714e44d1"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/symfony/finder/zipball/5e575faa95548d0586f6bedaeabec259714e44d1",
+            "reference": "5e575faa95548d0586f6bedaeabec259714e44d1",
+            "shasum": ""
+        },
+        "require": {
+            "php": "^7.1.3"
+        },
+        "time": "2019-09-16T11:29:48+00:00",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "4.3-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Symfony\\Component\\Finder\\": ""
+            },
+            "exclude-from-classmap": [
+                "/Tests/"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Fabien Potencier",
+                "email": "fabien@symfony.com"
+            },
+            {
+                "name": "Symfony Community",
+                "homepage": "https://symfony.com/contributors"
+            }
+        ],
+        "description": "Symfony Finder Component",
+        "homepage": "https://symfony.com"
+    },
+    {
         "name": "symfony/polyfill-mbstring",
         "version": "v1.12.0",
         "version_normalized": "1.12.0.0",
@@ -515,17 +566,17 @@
     },
     {
         "name": "symfony/var-dumper",
-        "version": "v4.3.4",
-        "version_normalized": "4.3.4.0",
+        "version": "v4.3.5",
+        "version_normalized": "4.3.5.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/var-dumper.git",
-            "reference": "641043e0f3e615990a0f29479f9c117e8a6698c6"
+            "reference": "bde8957fc415fdc6964f33916a3755737744ff05"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/var-dumper/zipball/641043e0f3e615990a0f29479f9c117e8a6698c6",
-            "reference": "641043e0f3e615990a0f29479f9c117e8a6698c6",
+            "url": "https://api.github.com/repos/symfony/var-dumper/zipball/bde8957fc415fdc6964f33916a3755737744ff05",
+            "reference": "bde8957fc415fdc6964f33916a3755737744ff05",
             "shasum": ""
         },
         "require": {
@@ -548,7 +599,7 @@
             "ext-intl": "To show region name in time zone dump",
             "symfony/console": "To use the ServerDumpCommand and/or the bin/var-dump-server script"
         },
-        "time": "2019-08-26T08:26:39+00:00",
+        "time": "2019-10-04T19:48:13+00:00",
         "bin": [
             "Resources/bin/var-dump-server"
         ],
@@ -598,12 +649,12 @@
         "source": {
             "type": "git",
             "url": "https://github.com/top-think/framework.git",
-            "reference": "ff076184a2bd4fee785c71dc0993e0051f2890d5"
+            "reference": "63f1d0bc5d0555e6e50b8431bb2e37442012d7bf"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/top-think/framework/zipball/ff076184a2bd4fee785c71dc0993e0051f2890d5",
-            "reference": "ff076184a2bd4fee785c71dc0993e0051f2890d5",
+            "url": "https://api.github.com/repos/top-think/framework/zipball/63f1d0bc5d0555e6e50b8431bb2e37442012d7bf",
+            "reference": "63f1d0bc5d0555e6e50b8431bb2e37442012d7bf",
             "shasum": ""
         },
         "require": {
@@ -624,7 +675,7 @@
             "mockery/mockery": "^1.2",
             "phpunit/phpunit": "^7.0"
         },
-        "time": "2019-10-07T05:56:34+00:00",
+        "time": "2019-10-14T01:43:58+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -654,6 +705,57 @@
             "orm",
             "thinkphp"
         ]
+    },
+    {
+        "name": "topthink/think-captcha",
+        "version": "v3.0.2",
+        "version_normalized": "3.0.2.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/top-think/think-captcha.git",
+            "reference": "0b4305da19e118cefd934007875a8112f9352f01"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/top-think/think-captcha/zipball/0b4305da19e118cefd934007875a8112f9352f01",
+            "reference": "0b4305da19e118cefd934007875a8112f9352f01",
+            "shasum": ""
+        },
+        "require": {
+            "topthink/framework": "^6.0.0"
+        },
+        "time": "2019-10-03T07:45:11+00:00",
+        "type": "library",
+        "extra": {
+            "think": {
+                "services": [
+                    "think\\captcha\\CaptchaService"
+                ],
+                "config": {
+                    "captcha": "src/config.php"
+                }
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "think\\captcha\\": "src/"
+            },
+            "files": [
+                "src/helper.php"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "Apache-2.0"
+        ],
+        "authors": [
+            {
+                "name": "yunwuxin",
+                "email": "448901948@qq.com"
+            }
+        ],
+        "description": "captcha package for thinkphp"
     },
     {
         "name": "topthink/think-helper",
@@ -697,18 +799,70 @@
         "description": "The ThinkPHP6 Helper Package"
     },
     {
+        "name": "topthink/think-migration",
+        "version": "v3.0.2",
+        "version_normalized": "3.0.2.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/top-think/think-migration.git",
+            "reference": "e8b3396505617732a57309d2818d70ffe187385c"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/top-think/think-migration/zipball/e8b3396505617732a57309d2818d70ffe187385c",
+            "reference": "e8b3396505617732a57309d2818d70ffe187385c",
+            "shasum": ""
+        },
+        "require": {
+            "topthink/framework": "^6.0.0",
+            "topthink/think-helper": "^3.0.3"
+        },
+        "require-dev": {
+            "fzaninotto/faker": "^1.8"
+        },
+        "suggest": {
+            "fzaninotto/faker": "Required to use the factory builder (^1.8)."
+        },
+        "time": "2019-06-17T10:13:39+00:00",
+        "type": "library",
+        "extra": {
+            "think": {
+                "services": [
+                    "think\\migration\\Service"
+                ]
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Phinx\\": "phinx/src/Phinx",
+                "think\\migration\\": "src"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "Apache-2.0"
+        ],
+        "authors": [
+            {
+                "name": "yunwuxin",
+                "email": "448901948@qq.com"
+            }
+        ]
+    },
+    {
         "name": "topthink/think-orm",
         "version": "2.0.x-dev",
         "version_normalized": "2.0.9999999.9999999-dev",
         "source": {
             "type": "git",
             "url": "https://github.com/top-think/think-orm.git",
-            "reference": "01f530a70a31b461557937ea75a7713862418b32"
+            "reference": "8ef883759fc94512bf5c62468c8dc0d8dc176afe"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/top-think/think-orm/zipball/01f530a70a31b461557937ea75a7713862418b32",
-            "reference": "01f530a70a31b461557937ea75a7713862418b32",
+            "url": "https://api.github.com/repos/top-think/think-orm/zipball/8ef883759fc94512bf5c62468c8dc0d8dc176afe",
+            "reference": "8ef883759fc94512bf5c62468c8dc0d8dc176afe",
             "shasum": ""
         },
         "require": {
@@ -718,7 +872,7 @@
             "psr/simple-cache": "^1.0",
             "topthink/think-helper": "^3.1"
         },
-        "time": "2019-09-27T12:49:28+00:00",
+        "time": "2019-10-11T01:34:19+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -742,6 +896,64 @@
             "database",
             "orm"
         ]
+    },
+    {
+        "name": "topthink/think-swoole",
+        "version": "v3.0.3",
+        "version_normalized": "3.0.3.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/top-think/think-swoole.git",
+            "reference": "06de3503d91a65281e603f8c48bf954decf3d4e1"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/top-think/think-swoole/zipball/06de3503d91a65281e603f8c48bf954decf3d4e1",
+            "reference": "06de3503d91a65281e603f8c48bf954decf3d4e1",
+            "shasum": ""
+        },
+        "require": {
+            "ext-swoole": ">=4.0.0",
+            "symfony/finder": "^4.3.2",
+            "topthink/framework": "^6.0",
+            "topthink/think-helper": "^3.0.4"
+        },
+        "require-dev": {
+            "swoole/ide-helper": "^4.3",
+            "symfony/var-dumper": "^4.3"
+        },
+        "time": "2019-07-18T09:21:03+00:00",
+        "type": "library",
+        "extra": {
+            "think": {
+                "services": [
+                    "think\\swoole\\Service"
+                ],
+                "config": {
+                    "swoole": "src/config/swoole.php"
+                }
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "think\\swoole\\": "src"
+            },
+            "files": [
+                "src/helpers.php"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "Apache-2.0"
+        ],
+        "authors": [
+            {
+                "name": "liu21st",
+                "email": "liu21st@gmail.com"
+            }
+        ],
+        "description": "Swoole extend for thinkphp"
     },
     {
         "name": "topthink/think-template",
@@ -784,24 +996,24 @@
     },
     {
         "name": "topthink/think-view",
-        "version": "v1.0.12",
-        "version_normalized": "1.0.12.0",
+        "version": "v1.0.13",
+        "version_normalized": "1.0.13.0",
         "source": {
             "type": "git",
             "url": "https://github.com/top-think/think-view.git",
-            "reference": "41dd64d023f312d2e73a14aac81edd25cffa336b"
+            "reference": "90803b73f781db5d42619082c4597afc58b2d4c5"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/top-think/think-view/zipball/41dd64d023f312d2e73a14aac81edd25cffa336b",
-            "reference": "41dd64d023f312d2e73a14aac81edd25cffa336b",
+            "url": "https://api.github.com/repos/top-think/think-view/zipball/90803b73f781db5d42619082c4597afc58b2d4c5",
+            "reference": "90803b73f781db5d42619082c4597afc58b2d4c5",
             "shasum": ""
         },
         "require": {
             "php": ">=7.1.0",
             "topthink/think-template": "^2.0"
         },
-        "time": "2019-09-17T08:05:04+00:00",
+        "time": "2019-10-07T12:23:10+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -820,5 +1032,142 @@
             }
         ],
         "description": "thinkphp template driver"
+    },
+    {
+        "name": "topthink/think-worker",
+        "version": "v3.0.3",
+        "version_normalized": "3.0.3.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/top-think/think-worker.git",
+            "reference": "9d009a04b1aaa3d9c311c301d3c5718c8601576a"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/top-think/think-worker/zipball/9d009a04b1aaa3d9c311c301d3c5718c8601576a",
+            "reference": "9d009a04b1aaa3d9c311c301d3c5718c8601576a",
+            "shasum": ""
+        },
+        "require": {
+            "ext-fileinfo": "*",
+            "topthink/framework": "^6.0.0",
+            "workerman/gateway-worker": "^3.0.0",
+            "workerman/workerman": "^3.3.0"
+        },
+        "time": "2019-08-27T07:04:23+00:00",
+        "type": "library",
+        "extra": {
+            "think": {
+                "services": [
+                    "think\\worker\\Service"
+                ],
+                "config": {
+                    "worker": "src/config/worker.php",
+                    "worker_server": "src/config/server.php",
+                    "gateway_worker": "src/config/gateway.php"
+                }
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "think\\worker\\": "src"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "Apache-2.0"
+        ],
+        "authors": [
+            {
+                "name": "liu21st",
+                "email": "liu21st@gmail.com"
+            }
+        ],
+        "description": "workerman extend for thinkphp6.0"
+    },
+    {
+        "name": "workerman/gateway-worker",
+        "version": "v3.0.13",
+        "version_normalized": "3.0.13.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/walkor/GatewayWorker.git",
+            "reference": "38b44c95f21cd340b5a9cff3987ddb2abb9a2a38"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/walkor/GatewayWorker/zipball/38b44c95f21cd340b5a9cff3987ddb2abb9a2a38",
+            "reference": "38b44c95f21cd340b5a9cff3987ddb2abb9a2a38",
+            "shasum": ""
+        },
+        "require": {
+            "workerman/workerman": ">=3.1.8"
+        },
+        "time": "2019-07-02T11:55:24+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "GatewayWorker\\": "./src"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "homepage": "http://www.workerman.net",
+        "keywords": [
+            "communication",
+            "distributed"
+        ]
+    },
+    {
+        "name": "workerman/workerman",
+        "version": "v3.5.22",
+        "version_normalized": "3.5.22.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/walkor/Workerman.git",
+            "reference": "488f108f9e446f31bac4d689bb9f9fe3705862cf"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/walkor/Workerman/zipball/488f108f9e446f31bac4d689bb9f9fe3705862cf",
+            "reference": "488f108f9e446f31bac4d689bb9f9fe3705862cf",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3"
+        },
+        "suggest": {
+            "ext-event": "For better performance. "
+        },
+        "time": "2019-09-06T03:42:47+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Workerman\\": "./"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "walkor",
+                "email": "walkor@workerman.net",
+                "homepage": "http://www.workerman.net",
+                "role": "Developer"
+            }
+        ],
+        "description": "An asynchronous event driven PHP framework for easily building fast, scalable network applications.",
+        "homepage": "http://www.workerman.net",
+        "keywords": [
+            "asynchronous",
+            "event-loop"
+        ]
     }
 ]
