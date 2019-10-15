@@ -1,16 +1,18 @@
+#!/usr/bin/env php
 <?php
+namespace think;
+require_once 'vendor/autoload.php';
 use Doctrine\ORM\Tools\Setup;
 use Doctrine\ORM\EntityManager;
-require_once 'vendor/autoload.php';
-$config = require_once 'config/database.php';
-$isDevMoe = true;
-$configuration =  Setup::createAnnotationMetadataConfiguration(array(__DIR__. '/app/entity'), $isDevMoe);
+
+$isDevMoe = false;
+$configuration =  Setup::createAnnotationMetadataConfiguration(array(__DIR__. '/app/entitys'), $isDevMoe);
 $conn = array(
-    'driver'   => 'pdo_mysql',
-    'user'     => $config['username'] ? $config['username'] : 'root',
-    'password' => $config['password'] ? $config['password'] : '',
-    'dbname'   => $config['database'] ? $config['database'] : 'symfony',
-    'port' => $config['hostport'] ? $config['hostport'] : 3306,
+    'driver' => 'pdo_mysql',
+    'user' => 'root',
+    'password' => 'root',
+    'dbname' => 'vmtestdb',
+    'port' => '3306',
     'charset' => 'utf8'
 );
 $entityManager = EntityManager::create($conn, $configuration);

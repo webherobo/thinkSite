@@ -2,7 +2,7 @@
 
 namespace app\controller;
 
-use think\Config;
+use think\facade\Env;
 use Doctrine\ORM\Tools\Setup;
 use Doctrine\ORM\EntityManager;
 
@@ -11,15 +11,19 @@ class Entity
     public static function getEntityManager()
     {
         $isDevMoe = true;
-        $config = Setup::createAnnotationMetadataConfiguration(array(APP_PATH . '/entity'), $isDevMoe);
+        $config = Setup::createAnnotationMetadataConfiguration(array(app_path() . 'entity'), $isDevMoe);
         $conn = array(
-            'driver' => 'pdo_mysql',
-            'user' => Config::get('database.username') ? Config::get('database.username') : 'root',
-            'password' => Config::get('database.password') ? Config::get('database.password') : '',
-            'dbname' => Config::get('database.database') ? Config::get('database.database') : 'symfony',
-            'port' => Config::get('database.hostport') ? Config::get('database.hostport') : 3306,
-            'charset' => 'utf8'
+            'host' => Env::get('database.HOSTNAME', 'localhost'),
+            'driver' => Env::get('database.driver', 'pdo_mysql'),
+            'user' => Env::get('database.username', 'root'),
+            'password' => Env::get('database.password', ''),
+            'dbname' => Env::get('database.database', ''),
+            'port' => Env::get('database.hostport', '3306'),
+            'charset' => Env::get('database.charset', 'utf8')
         );
-        return EntityManager::create($conn, $config);
+        $result=EntityManager::create($conn, $config);
+        //return  $result;
+        var_dump(app_path() . 'entity');
+        //var_dump($result);exit;
     }
 }

@@ -8,7 +8,7 @@ USE app\validate\UserValidate;
 use think\exception\ValidateException;
 use think\facade\View;
 
-think\facade\Cache;
+use think\facade\Cache;
 
 class Index extends BaseController
 {
