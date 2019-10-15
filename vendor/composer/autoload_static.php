@@ -7,13 +7,12 @@ namespace Composer\Autoload;
 class ComposerStaticInit08b4b6552aaae49c95aa13b9dc91d4e5
 {
     public static $files = array (
+        '9b552a3cc426e3287cc811caefa3cf53' => __DIR__ . '/..' . '/topthink/think-helper/src/helper.php',
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
         '0d59ee240a4cd96ddbb4ff164fccea4d' => __DIR__ . '/..' . '/symfony/polyfill-php73/bootstrap.php',
-        '9b552a3cc426e3287cc811caefa3cf53' => __DIR__ . '/..' . '/topthink/think-helper/src/helper.php',
+        '538ca81a9a966a6716601ecf48f4eaef' => __DIR__ . '/..' . '/opis/closure/functions.php',
         '25072dd6e2470089de65ae7bf11d3109' => __DIR__ . '/..' . '/symfony/polyfill-php72/bootstrap.php',
         '667aeda72477189d0494fecd327c3641' => __DIR__ . '/..' . '/symfony/var-dumper/Resources/functions/dump.php',
-        '538ca81a9a966a6716601ecf48f4eaef' => __DIR__ . '/..' . '/opis/closure/functions.php',
-        '72579e7bd17821bb1321b87411366eae' => __DIR__ . '/..' . '/illuminate/support/helpers.php',
         '1cfd2761b63b0a29ed23657ea394cb2d' => __DIR__ . '/..' . '/topthink/think-captcha/src/helper.php',
         'af46dcea2921209ac30627b964175f13' => __DIR__ . '/..' . '/topthink/think-swoole/src/helpers.php',
     );
@@ -41,10 +40,8 @@ class ComposerStaticInit08b4b6552aaae49c95aa13b9dc91d4e5
             'Symfony\\Polyfill\\Php73\\' => 23,
             'Symfony\\Polyfill\\Php72\\' => 23,
             'Symfony\\Polyfill\\Mbstring\\' => 26,
-            'Symfony\\Contracts\\Translation\\' => 30,
             'Symfony\\Contracts\\Service\\' => 26,
             'Symfony\\Component\\VarDumper\\' => 28,
-            'Symfony\\Component\\Translation\\' => 30,
             'Symfony\\Component\\Finder\\' => 25,
             'Symfony\\Component\\Console\\' => 26,
         ),
@@ -65,12 +62,6 @@ class ComposerStaticInit08b4b6552aaae49c95aa13b9dc91d4e5
             'League\\Flysystem\\Cached\\' => 24,
             'League\\Flysystem\\' => 17,
         ),
-        'I' => 
-        array (
-            'Illuminate\\Support\\' => 19,
-            'Illuminate\\Contracts\\' => 21,
-            'Iber\\Generator\\' => 15,
-        ),
         'G' => 
         array (
             'GatewayWorker\\' => 14,
@@ -86,10 +77,6 @@ class ComposerStaticInit08b4b6552aaae49c95aa13b9dc91d4e5
             'Doctrine\\Common\\Cache\\' => 22,
             'Doctrine\\Common\\Annotations\\' => 28,
             'Doctrine\\Common\\' => 16,
-        ),
-        'C' => 
-        array (
-            'Carbon\\' => 7,
         ),
     );
 
@@ -141,10 +128,6 @@ class ComposerStaticInit08b4b6552aaae49c95aa13b9dc91d4e5
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
         ),
-        'Symfony\\Contracts\\Translation\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/symfony/translation-contracts',
-        ),
         'Symfony\\Contracts\\Service\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/service-contracts',
@@ -152,10 +135,6 @@ class ComposerStaticInit08b4b6552aaae49c95aa13b9dc91d4e5
         'Symfony\\Component\\VarDumper\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/var-dumper',
-        ),
-        'Symfony\\Component\\Translation\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/symfony/translation',
         ),
         'Symfony\\Component\\Finder\\' => 
         array (
@@ -196,18 +175,6 @@ class ComposerStaticInit08b4b6552aaae49c95aa13b9dc91d4e5
         'League\\Flysystem\\' => 
         array (
             0 => __DIR__ . '/..' . '/league/flysystem/src',
-        ),
-        'Illuminate\\Support\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/illuminate/support',
-        ),
-        'Illuminate\\Contracts\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/illuminate/contracts',
-        ),
-        'Iber\\Generator\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/ignasbernotas/laravel-model-generator/src',
         ),
         'GatewayWorker\\' => 
         array (
@@ -251,10 +218,6 @@ class ComposerStaticInit08b4b6552aaae49c95aa13b9dc91d4e5
             1 => __DIR__ . '/..' . '/doctrine/event-manager/lib/Doctrine/Common',
             2 => __DIR__ . '/..' . '/doctrine/persistence/lib/Doctrine/Common',
             3 => __DIR__ . '/..' . '/doctrine/reflection/lib/Doctrine/Common',
-        ),
-        'Carbon\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon',
         ),
     );
 
