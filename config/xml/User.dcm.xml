@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="User" table="user">
+    <indexes>
+      <index name="user_login" columns="user_login"/>
+      <index name="user_nickname" columns="user_nickname"/>
+    </indexes>
+    <id name="id" type="bigint" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="userType" type="boolean" column="user_type" nullable="false">
+      <options>
+        <option name="comment">用户类型;1:admin;2:会员</option>
+        <option name="default">1</option>
+      </options>
+    </field>
+    <field name="age" type="integer" column="age" nullable="true">
+      <options>
+        <option name="unsigned"/>
+        <option name="comment">年龄</option>
+      </options>
+    </field>
+    <field name="sex" type="boolean" column="sex" nullable="false">
+      <options>
+        <option name="comment">性别;0:保密,1:男,2:女</option>
+        <option name="default">0</option>
+      </options>
+    </field>
+    <field name="birthday" type="integer" column="birthday" nullable="false">
+      <options>
+        <option name="unsigned"/>
+        <option name="comment">生日</option>
+        <option name="default">0</option>
+      </options>
+    </field>
+    <field name="lastLoginTime" type="integer" column="last_login_time" nullable="false">
+      <options>
+        <option name="unsigned"/>
+        <option name="comment">最后登录时间</option>
+        <option name="default">0</option>
+      </options>
+    </field>
+    <field name="score" type="integer" column="score" nullable="false">
+      <options>
+        <option name="unsigned"/>
+        <option name="comment">用户积分</option>
+        <option name="default">0</option>
+      </options>
+    </field>
+    <field name="coin" type="integer" column="coin" nullable="false">
+      <options>
+        <option name="unsigned">1</option>
+        <option name="comment">金币</option>
+        <option name="default">0</option>
+      </options>
+    </field>
+    <field name="balance" type="decimal" column="balance" precision="10" scale="2" nullable="false">
+      <options>
+        <option name="comment">余额</option>
+        <option name="default">0.00</option>
+      </options>
+    </field>
+    <field name="createTime" type="integer" column="create_time" nullable="false">
+      <options>
+        <option name="unsigned"/>
+        <option name="comment">注册时间</option>
+        <option name="default">0</option>
+      </options>
+    </field>
+    <field name="userStatus" type="boolean" column="user_status" nullable="false">
+      <options>
+        <option name="comment">用户状态;0:禁用,1:正常,2:未验证</option>
+        <option name="default">1</option>
+      </options>
+    </field>
+    <field name="userLogin" type="string" column="user_login" length="60" nullable="false">
+      <options>
+        <option name="fixed"/>
+        <option name="comment">用户名</option>
+        <option name="default"/>
+      </options>
+    </field>
+    <field name="userPass" type="string" column="user_pass" length="64" nullable="false">
+      <options>
+        <option name="fixed"/>
+        <option name="comment">登录密码;cmf_password加密</option>
+        <option name="default"/>
+      </options>
+    </field>
+    <field name="userNickname" type="string" column="user_nickname" length="50" nullable="false">
+      <options>
+        <option name="fixed"/>
+        <option name="comment">用户昵称</option>
+        <option name="default"/>
+      </options>
+    </field>
+    <field name="userEmail" type="string" column="user_email" length="100" nullable="false">
+      <options>
+        <option name="fixed"/>
+        <option name="comment">用户登录邮箱</option>
+        <option name="default"/>
+      </options>
+    </field>
+    <field name="userUrl" type="string" column="user_url" length="100" nullable="false">
+      <options>
+        <option name="fixed"/>
+        <option name="comment">用户个人网址</option>
+        <option name="default"/>
+      </options>
+    </field>
+    <field name="avatar" type="string" column="avatar" length="255" nullable="false">
+      <options>
+        <option name="fixed"/>
+        <option name="comment">用户头像</option>
+        <option name="default"/>
+      </options>
+    </field>
+    <field name="signature" type="string" column="signature" length="255" nullable="false">
+      <options>
+        <option name="fixed"/>
+        <option name="comment">个性签名</option>
+        <option name="default"/>
+      </options>
+    </field>
+    <field name="lastLoginIp" type="string" column="last_login_ip" length="15" nullable="false">
+      <options>
+        <option name="fixed"/>
+        <option name="comment">最后登录ip</option>
+        <option name="default"/>
+      </options>
+    </field>
+    <field name="userActivationKey" type="string" column="user_activation_key" length="60" nullable="false">
+      <options>
+        <option name="fixed"/>
+        <option name="comment">激活码</option>
+        <option name="default"/>
+      </options>
+    </field>
+    <field name="mobile" type="string" column="mobile" length="20" nullable="false">
+      <options>
+        <option name="fixed"/>
+        <option name="comment">中国手机不带国家代码，国际手机号格式为：国家代码-手机号</option>
+        <option name="default"/>
+      </options>
+    </field>
+    <field name="more" type="text" column="more" length="65535" nullable="true">
+      <options>
+        <option name="fixed"/>
+        <option name="comment">扩展属性</option>
+      </options>
+    </field>
+    <field name="siteId" type="integer" column="site_id" nullable="false">
+      <options>
+        <option name="unsigned"/>
+        <option name="comment">站点ID</option>
+        <option name="default">0</option>
+      </options>
+    </field>
+  </entity>
+</doctrine-mapping>

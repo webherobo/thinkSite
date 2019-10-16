@@ -7,4 +7,5 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'JsonException' => $vendorDir . '/symfony/polyfill-php73/Resources/stubs/JsonException.php',
+    'PclZip' => $vendorDir . '/pclzip/pclzip/pclzip.lib.php',
 );
