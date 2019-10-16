@@ -5,10 +5,8 @@ declare(strict_types=1);
 namespace app\service;
 
 use think\Service;
-use \PhpOffice\PhpSpreadsheet\Spreadsheet;
-use \PhpOffice\PhpSpreadsheet\IOFactory;//use \PHPExcel_Style_NumberFormat;    //设置列的格式==>>设置文本格式
-
-use \PhpOffice\PhpSpreadsheet\IOFactory;//导入类Import
+use phpoffice\phpspreadsheet\Spreadsheet;
+use phpoffice\phpspreadsheet\IOFactory;//use \PHPExcel_Style_NumberFormat;    //设置列的格式==>>设置文本格式
 
 class PhpOfficeService extends Service
 {
