@@ -1,6 +1,5 @@
 #!/usr/bin/env php
 <?php
-namespace think;
 require_once 'vendor/autoload.php';
 use Doctrine\ORM\Tools\Setup;
 use Doctrine\ORM\EntityManager;
