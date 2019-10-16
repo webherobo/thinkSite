@@ -1,0 +1,8 @@
+//命令
+ php artisan krlove:generate:model OrderFrom --table-name=yd_order_from --output-path=./Model --namespace=App\\Model
+
+./vendor/bin/doctrine orm:generate-entities  app --no-backup
+./vendor/bin/doctrine orm:schema-tool:create  
+./vendor/bin/doctrine orm:convert-mapping 
+./vendor/bin/doctrine orm:mapping:convert  annotation ./app 
+./vendor/bin/doctrine  orm:convert-mapping xml config/xml/ --from-database
