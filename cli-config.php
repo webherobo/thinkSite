@@ -1,12 +1,11 @@
 #!/usr/bin/env php
 <?php
-namespace think;
 require_once 'vendor/autoload.php';
 use Doctrine\ORM\Tools\Setup;
 use Doctrine\ORM\EntityManager;
 
 $isDevMoe = false;
-$configuration =  Setup::createAnnotationMetadataConfiguration(array(__DIR__. '/app/entitys'), $isDevMoe);
+$configuration =  Setup::createAnnotationMetadataConfiguration(array(__DIR__. '/config/xml'), $isDevMoe);
 $conn = array(
     'driver' => 'pdo_mysql',
     'user' => 'root',
