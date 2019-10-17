@@ -4,8 +4,13 @@ require_once 'vendor/autoload.php';
 use Doctrine\ORM\Tools\Setup;
 use Doctrine\ORM\EntityManager;
 
-$isDevMoe = false;
-$configuration =  Setup::createAnnotationMetadataConfiguration(array(__DIR__. '/config/xml'), $isDevMoe);
+$isDevMode = true;
+$proxyDir = null;
+$cache = null;
+$useSimpleAnnotationReader = false;
+$configuration = Setup::createAnnotationMetadataConfiguration(array(__DIR__."/config/xml"), $isDevMode, $proxyDir, $cache, $useSimpleAnnotationReader);
+//$isDevMoe = false;
+//$configuration =  Setup::createAnnotationMetadataConfiguration(array(__DIR__. '/config/xml'), $isDevMoe);
 $conn = array(
     'driver' => 'pdo_mysql',
     'user' => 'root',
