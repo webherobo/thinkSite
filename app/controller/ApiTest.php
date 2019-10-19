@@ -59,13 +59,7 @@ class ApiTest extends ApiBase
     public function redislock()
     {
         $fp = fopen(app()->getRootPath() . "runtime/redislock.log", "a+");
-        $servers = [
-            ['127.0.0.1', 6379, 0.01],
-            //   ['127.0.0.1', 6389, 0.01],
-            //  ['127.0.0.1', 6399, 0.01],
-        ];
-       // $redLock = new app\service\LockService($servers);
-        $redLock =new LockService();
+        $redLock =$this->app->lockService;
         while (true) {
             $lock = $redLock->lock('test', 10000);
             if ($lock) {
