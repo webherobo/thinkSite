@@ -11,10 +11,10 @@ use think\Service;
  */
 class LockService extends Service
 {
-    private $retryDelay;
+    private $retryDelay;//重试延迟
     private $retryCount;
-    private $clockDriftFactor = 0.01;
-    private $quorum;
+    private $clockDriftFactor = 0.01;//漂移的因素
+    private $quorum;//仲裁
     private $servers = array();
     private $instances = array();
 
