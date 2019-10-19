@@ -60,15 +60,19 @@ class ApiTest extends ApiBase
     {
         $fp = fopen(app()->getRootPath() . "runtime/redislock.log", "a+");
         $redLock =$this->app->lockService;
-        while (true) {
+        static $i=10;
+        while ($i>0) {
             $lock = $redLock->lock('test', 10000);
             if ($lock) {
                 fwrite($fp, json_encode($lock) . "->lock进程\n");
             } else {
                 fwrite($fp, json_encode($lock) . "Lock not acquired->lock进程\n");
             }
+            $i--;
         }
+        unset($i);
         fclose($fp);
+        return "ok!";
     }
 
 }
