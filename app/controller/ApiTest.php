@@ -64,7 +64,8 @@ class ApiTest extends ApiBase
             //   ['127.0.0.1', 6389, 0.01],
             //  ['127.0.0.1', 6399, 0.01],
         ];
-        $redLock = new LockService($servers);
+       // $redLock = new app\service\LockService($servers);
+        $redLock =new LockService();
         while (true) {
             $lock = $redLock->lock('test', 10000);
             if ($lock) {

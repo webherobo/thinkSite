@@ -26,6 +26,31 @@ class LockService extends Service
         $this->quorum = min(count($servers), (count($servers) / 2 + 1));
     }
 
+    /**
+     * 注册服务
+     *
+     * @return mixed
+     */
+    public function register()
+    {
+        $this->app->bind('lockService', LockService::class);
+    }
+
+
+    /**
+     * 执行服务
+     *
+     * @return mixed
+     */
+    public function boot()
+    {
+        //
+        $servers  = [
+            ['127.0.0.1', 6379, 0.01],
+        ];
+        new LockService($servers);
+    }
+
     public function lock($resource, $ttl)
     {
         $this->initInstances();
