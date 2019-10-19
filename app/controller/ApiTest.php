@@ -64,9 +64,9 @@ class ApiTest extends ApiBase
         while ($i>0) {
             $lock = $redLock->lock('test', 10000);
             if ($lock) {
-                fwrite($fp, json_encode($lock) . "->lock进程\n");
+                fwrite($fp, json_encode($lock) . $i."->lock进程\n");
             } else {
-                fwrite($fp, json_encode($lock) . "Lock not acquired->lock进程\n");
+                fwrite($fp, json_encode($lock) . $i."Lock not acquired->lock进程\n");
             }
             $i--;
         }
