@@ -13,7 +13,7 @@ class ApiTest extends ApiBase
     //filelock文件锁
     public function filelock($type)
     {
-        $fp = fopen("app.log", "a+");
+        $fp = fopen(app()->getRootPath()."runtime/app.log", "a+");
         if ($type) {
             if (flock($fp, LOCK_EX)) {  // 进行排它型锁定
                 fwrite($fp, "LOCK_EX Write something here\n");
