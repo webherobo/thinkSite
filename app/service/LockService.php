@@ -18,7 +18,8 @@ class LockService extends Service
     private $servers = array();
     private $instances = array();
 
-    function __construct(array $servers, $retryDelay = 200, $retryCount = 3)
+    //function __construct(array $servers, $retryDelay = 200, $retryCount = 3)
+   private function  init(array $servers, $retryDelay = 200, $retryCount = 3)
     {
         $this->servers = $servers;
         $this->retryDelay = $retryDelay;
@@ -48,7 +49,8 @@ class LockService extends Service
         $servers  = [
             ['127.0.0.1', 6379, 0.01],
         ];
-        new LockService($servers);
+        $lockService=new LockService();
+        $lockService->init($servers);
     }
 
     public function lock($resource, $ttl)
