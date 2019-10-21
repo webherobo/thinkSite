@@ -6,7 +6,7 @@ namespace app\controller;
 /**接口测试*/
 
 use think\facade\Cache;
-use think\App;
+USE app\model\User;
 
 class ApiTest extends ApiBase
 {
@@ -73,6 +73,13 @@ class ApiTest extends ApiBase
         unset($i);
         fclose($fp);
         return "ok!";
+    }
+    //db锁
+    public function dblock($type=false){
+        $userModel=new User();
+        $userdata=$userModel->where(["id"=>1])->lock($type)->find();
+        $userdata->setInc('score');
+        return ["code"=>0,"message"=>"ok","data"=>[]];
     }
 
 }
