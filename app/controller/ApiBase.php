@@ -11,7 +11,7 @@ class ApiBase extends BaseController
     //统一返回格式
     public static function return($statusCode, $data = [])
     {
-        return json($data,$statusCode);
+        return json($data,self::code($statusCode));
     }
     //状态码转换
     public static function code($code=0){
