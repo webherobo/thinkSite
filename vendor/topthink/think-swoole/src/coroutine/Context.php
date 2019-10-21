@@ -2,17 +2,11 @@
 
 namespace think\swoole\coroutine;
 
+use Closure;
 use Swoole\Coroutine;
-use think\Container;
 
 class Context
 {
-    /**
-     * The app containers in different coroutine environment.
-     *
-     * @var array
-     */
-    protected static $apps = [];
 
     /**
      * The data in different coroutine environment.
@@ -22,33 +16,37 @@ class Context
     protected static $data = [];
 
     /**
-     * Get app container by current coroutine id.
-     */
-    public static function getApp()
-    {
-        return static::$apps[static::getCoroutineId()] ?? null;
-    }
-
-    /**
-     * Set app container by current coroutine id.
-     *
-     * @param Container $app
-     */
-    public static function setApp(Container $app)
-    {
-        static::$apps[static::getCoroutineId()] = $app;
-    }
-
-    /**
      * Get data by current coroutine id.
      *
      * @param string $key
      *
+     * @param null   $default
      * @return mixed|null
      */
-    public static function getData(string $key)
+    public static function getData(string $key, $default = null)
     {
-        return static::$data[static::getCoroutineId()][$key] ?? null;
+        return static::$data[static::getCoroutineId()][$key] ?? $default;
+    }
+
+    public static function hasData(string $key)
+    {
+        return isset(static::$data[static::getCoroutineId()]) && array_key_exists($key, static::$data[static::getCoroutineId()]);
+    }
+
+    public static function rememberData(string $key, $value)
+    {
+        if (self::hasData($key)) {
+            return self::getData($key);
+        }
+
+        if ($value instanceof Closure) {
+            // 获取缓存数据
+            $value = $value();
+        }
+
+        self::setData($key, $value);
+
+        return $value;
     }
 
     /**
@@ -85,7 +83,6 @@ class Context
      */
     public static function clear()
     {
-        unset(static::$apps[static::getCoroutineId()]);
         unset(static::$data[static::getCoroutineId()]);
     }
 

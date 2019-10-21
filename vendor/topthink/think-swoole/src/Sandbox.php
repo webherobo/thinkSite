@@ -2,26 +2,36 @@
 
 namespace think\swoole;
 
+use Closure;
 use RuntimeException;
+use Symfony\Component\VarDumper\VarDumper;
 use think\App;
 use think\Config;
 use think\Container;
 use think\Event;
 use think\Http;
-use think\Request;
-use think\Response;
+use think\service\PaginatorService;
+use think\swoole\contract\ResetterInterface;
 use think\swoole\coroutine\Context;
-use think\swoole\resetters\BindRequest;
+use think\swoole\middleware\ResetVarDumper;
 use think\swoole\resetters\ClearInstances;
-use think\swoole\resetters\RebindHttpContainer;
-use think\swoole\resetters\RebindRouterContainer;
 use think\swoole\resetters\ResetConfig;
-use think\swoole\resetters\ResetDumper;
 use think\swoole\resetters\ResetEvent;
-use think\swoole\resetters\ResetterContract;
+use think\swoole\resetters\ResetService;
+use Throwable;
 
 class Sandbox
 {
+    /**
+     * The app containers in different coroutine environment.
+     *
+     * @var array
+     */
+    protected $snapshots = [];
+
+    /** @var Manager */
+    protected $manager;
+
     /** @var App */
     protected $app;
 
@@ -31,14 +41,13 @@ class Sandbox
     /** @var Event */
     protected $event;
 
+    /** @var ResetterInterface[] */
     protected $resetters = [];
+    protected $services  = [];
 
-    public function __construct($app = null)
+    public function __construct(Container $app, Manager $manager)
     {
-        if (!$app instanceof Container) {
-            return;
-        }
-
+        $this->manager = $manager;
         $this->setBaseApp($app);
         $this->initialize();
     }
@@ -57,79 +66,53 @@ class Sandbox
 
     protected function initialize()
     {
-        if (!$this->app instanceof Container) {
-            throw new RuntimeException('A base app has not been set.');
-        }
-
         Container::setInstance(function () {
             return $this->getApplication();
         });
 
+        $this->app->bind(Http::class, \think\swoole\Http::class);
+
         $this->setInitialConfig();
+        $this->setInitialServices();
         $this->setInitialEvent();
         $this->setInitialResetters();
+        //兼容var-dumper
+        $this->compatibleVarDumper();
 
         return $this;
     }
 
-    /**
-     * @param Request $request
-     * @return Response
-     */
-    public function run(Request $request)
+    public function run(Closure $callable, $fd = null, $persistent = false)
     {
+        $this->init($fd);
 
-        $level = ob_get_level();
-        ob_start();
-
-        $response = $this->handleRequest($request);
-
-        $content = $response->getContent();
-
-        if (ob_get_level() == 0) {
-            ob_start();
+        try {
+            $this->getApplication()->invoke($callable, [$this]);
+        } catch (Throwable $e) {
+            $this->manager->logServerError($e);
+        } finally {
+            $this->clear(!$persistent);
         }
-
-        $this->getHttp()->end($response);
-
-        if (ob_get_length() > 0) {
-            $response->content(ob_get_contents() . $content);
-        }
-
-        while (ob_get_level() > $level) {
-            ob_end_clean();
-        }
-
-        return $response;
     }
 
-    protected function handleRequest(Request $request)
+    public function init($fd = null)
     {
-        return $this->getHttp()->run($request);
-    }
-
-    public function init()
-    {
-        if (!$this->config instanceof Config) {
-            throw new RuntimeException('Please initialize after setting base app.');
+        if (!is_null($fd)) {
+            Context::setData('_fd', $fd);
         }
-
         $this->setInstance($app = $this->getApplication());
         $this->resetApp($app);
     }
 
-    public function clear()
+    public function clear($snapshot = true)
     {
+        if ($snapshot) {
+            unset($this->snapshots[$this->getSnapshotId()]);
+        }
+
         Context::clear();
         $this->setInstance($this->getBaseApp());
-    }
-
-    /**
-     * @return Http
-     */
-    protected function getHttp()
-    {
-        return $this->getApplication()->make(Http::class);
+        gc_collect_cycles();
     }
 
     public function getApplication()
@@ -145,17 +128,27 @@ class Sandbox
         return $snapshot;
     }
 
+    protected function getSnapshotId()
+    {
+        if ($fd = Context::getData('_fd')) {
+            return "fd_" . $fd;
+        } else {
+            return Context::getCoroutineId();
+        }
+    }
+
     /**
      * Get current snapshot.
+     * @return App|null
      */
     public function getSnapshot()
     {
-        return Context::getApp();
+        return $this->snapshots[$this->getSnapshotId()] ?? null;
     }
 
     public function setSnapshot(Container $snapshot)
     {
-        Context::setApp($snapshot);
+        $this->snapshots[$this->getSnapshotId()] = $snapshot;
 
         return $this;
     }
@@ -164,8 +157,6 @@ class Sandbox
     {
         $app->instance('app', $app);
         $app->instance(Container::class, $app);
-
-        Context::setApp($app);
     }
 
     /**
@@ -194,6 +185,29 @@ class Sandbox
         return $this->event;
     }
 
+    public function getServices()
+    {
+        return $this->services;
+    }
+
+    protected function setInitialServices()
+    {
+        $app = $this->getBaseApp();
+
+        $services = [
+            PaginatorService::class,
+        ];
+
+        $services = array_merge($services, $this->config->get('swoole.services', []));
+
+        foreach ($services as $service) {
+            if (class_exists($service) && !in_array($service, $this->services)) {
+                $serviceObj               = new $service($app);
+                $this->services[$service] = $serviceObj;
+            }
+        }
+    }
+
     /**
      * Initialize resetters.
      */
@@ -203,31 +217,20 @@ class Sandbox
 
         $resetters = [
             ClearInstances::class,
-            RebindHttpContainer::class,
-            RebindRouterContainer::class,
-            BindRequest::class,
-            ResetDumper::class,
             ResetConfig::class,
             ResetEvent::class,
+            ResetService::class,
         ];
 
         $resetters = array_merge($resetters, $this->config->get('swoole.resetters', []));
 
         foreach ($resetters as $resetter) {
             $resetterClass = $app->make($resetter);
-            if (!$resetterClass instanceof ResetterContract) {
-                throw new RuntimeException("{$resetter} must implement " . ResetterContract::class);
+            if (!$resetterClass instanceof ResetterInterface) {
+                throw new RuntimeException("{$resetter} must implement " . ResetterInterface::class);
             }
             $this->resetters[$resetter] = $resetterClass;
         }
-    }
-
-    /**
-     * Get Initialized resetters.
-     */
-    public function getResetters()
-    {
-        return $this->resetters;
     }
 
     /**
@@ -235,25 +238,18 @@ class Sandbox
      *
      * @param Container $app
      */
-    public function resetApp(Container $app)
+    protected function resetApp(Container $app)
     {
         foreach ($this->resetters as $resetter) {
             $resetter->handle($app, $this);
         }
     }
 
-    public function setRequest(Request $request)
+    protected function compatibleVarDumper()
     {
-        Context::setData('_request', $request);
-
-        return $this;
+        if (class_exists(VarDumper::class)) {
+            $this->app->middleware->add(ResetVarDumper::class);
+        }
     }
 
-    /**
-     * Get current request.
-     */
-    public function getRequest()
-    {
-        return Context::getData('_request');
-    }
 }

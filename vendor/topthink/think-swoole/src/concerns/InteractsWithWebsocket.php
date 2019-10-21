@@ -2,24 +2,22 @@
 
 namespace think\swoole\concerns;
 
-use http\Exception\RuntimeException;
 use Swoole\Http\Request;
+use Swoole\Server\Task;
 use Swoole\Websocket\Frame;
 use Swoole\Websocket\Server;
 use think\App;
 use think\Container;
-use think\helper\Arr;
-use think\swoole\facade\Server as SwooleServer;
-use think\swoole\Sandbox;
+use think\Event;
+use think\helper\Str;
+use think\swoole\contract\websocket\HandlerInterface;
+use think\swoole\contract\websocket\ParserInterface;
+use think\swoole\contract\websocket\RoomInterface;
 use think\swoole\Websocket;
-use think\swoole\websocket\HandlerContract;
-use think\swoole\websocket\Parser;
 use think\swoole\websocket\Pusher;
-use think\swoole\websocket\room\RoomContract;
-use think\swoole\websocket\room\TableRoom;
+use think\swoole\websocket\Room;
 use think\swoole\websocket\socketio\Handler;
 use think\swoole\websocket\socketio\Parser as SocketioParser;
-use Throwable;
 
 /**
  * Trait InteractsWithWebsocket
@@ -27,23 +25,19 @@ use Throwable;
  *
  * @property App       $app
  * @property Container $container
+ * @method \Swoole\Server getServer()
  */
 trait InteractsWithWebsocket
 {
     /**
      * @var boolean
      */
-    protected $isServerWebsocket = false;
+    protected $isWebsocketServer = false;
 
     /**
-     * @var HandlerContract
+     * @var RoomInterface
      */
-    protected $websocketHandler;
-
-    /**
-     * @var Parser
-     */
-    protected $payloadParser;
+    protected $websocketRoom;
 
     /**
      * Websocket server events.
@@ -60,34 +54,17 @@ trait InteractsWithWebsocket
      */
     public function onOpen($server, $req)
     {
-        $request = $this->prepareRequest($req);
         /** @var Websocket $websocket */
         $websocket = $this->app->make(Websocket::class);
-        /** @var Sandbox $sandbox */
-        $sandbox = $this->app->make(Sandbox::class);
+        $websocket->setSender($req->fd);
 
-        try {
-            $websocket->reset(true)->setSender($req->fd);
-            // set current request to sandbox
-            $sandbox->setRequest($request);
-            // enable sandbox
-            $sandbox->init();
+        $this->runInSandbox(function (Event $event, HandlerInterface $handler) use ($req) {
+            $request = $this->prepareRequest($req);
 
-            // check if socket.io connection established
-            if (!$this->websocketHandler->onOpen($req->fd, $request)) {
-                return;
+            if (!$handler->onOpen($req->fd, $request)) {
+                $event->trigger("swoole.websocket.Connect", $request);
             }
-
-            // trigger 'connect' websocket event
-            if ($websocket->eventExists('connect')) {
-                $websocket->call('connect', $request);
-            }
-        } catch (Throwable $e) {
-            $this->logServerError($e);
-        } finally {
-            // disable and recycle sandbox resource
-            $sandbox->clear();
-        }
+        }, $req->fd, true);
     }
 
     /**
@@ -98,36 +75,21 @@ trait InteractsWithWebsocket
      */
     public function onMessage($server, $frame)
     {
-        // execute parser strategies and skip non-message packet
-        if ($this->payloadParser->execute($server, $frame)) {
-            return;
-        }
-
         /** @var Websocket $websocket */
         $websocket = $this->app->make(Websocket::class);
-        /** @var Sandbox $sandbox */
-        $sandbox = $this->app->make(Sandbox::class);
+        $websocket->setSender($frame->fd);
 
-        try {
-            // decode raw message via parser
-            $payload = $this->payloadParser->decode($frame);
+        $this->runInSandbox(function (Event $event, ParserInterface $parser, HandlerInterface $handler) use ($frame) {
+            if (!$handler->onMessage($frame)) {
+                $payload = $parser->decode($frame);
 
-            $websocket->reset(true)->setSender($frame->fd);
-
-            // enable sandbox
-            $sandbox->init();
-
-            // dispatch message to registered event callback
-            ['event' => $event, 'data' => $data] = $payload;
-            $websocket->eventExists($event)
-                ? $websocket->call($event, $data)
-                : $this->websocketHandler->onMessage($frame);
-        } catch (Throwable $e) {
-            $this->logServerError($e);
-        } finally {
-            // disable and recycle sandbox resource
-            $sandbox->clear();
-        }
+                ['event' => $name, 'data' => $data] = $payload;
+                $name = Str::studly($name);
+                if (!in_array($name, ['Close', 'Connect'])) {
+                    $event->trigger("swoole.websocket." . $name, $data);
+                }
+            }
+        }, $frame->fd, true);
     }
 
     /**
@@ -139,63 +101,24 @@ trait InteractsWithWebsocket
      */
     public function onClose($server, $fd, $reactorId)
     {
-        if (!$this->isServerWebsocket($fd) || !$server instanceof Server) {
+        if (!$this->isWebsocketServer($fd) || !$server instanceof Server) {
             return;
         }
 
         /** @var Websocket $websocket */
         $websocket = $this->app->make(Websocket::class);
+        $websocket->setSender($fd);
 
-        try {
-            $websocket->reset(true)->setSender($fd);
-            // trigger 'disconnect' websocket event
-            if ($websocket->eventExists('disconnect')) {
-                $websocket->call('disconnect');
-            } else {
-                $this->websocketHandler->onClose($fd, $reactorId);
+        $this->runInSandbox(function (Event $event, HandlerInterface $handler) use ($websocket, $fd, $reactorId) {
+            try {
+                if (!$handler->onClose($fd, $reactorId)) {
+                    $event->trigger("swoole.websocket.Close");
+                }
+            } finally {
+                // leave all rooms
+                $websocket->leave();
             }
-            // leave all rooms
-            $websocket->leave();
-        } catch (Throwable $e) {
-            $this->logServerError($e);
-        }
-    }
-
-    /**
-     * Push websocket message to clients.
-     *
-     * @param Server $server
-     * @param mixed  $data
-     */
-    public function pushMessage($server, array $data)
-    {
-        $pusher = Pusher::make($data, $server);
-        $pusher->push($this->payloadParser->encode(
-            $pusher->getEvent(),
-            $pusher->getMessage()
-        ));
-    }
-
-    /**
-     * Set frame parser for websocket.
-     *
-     * @param Parser $payloadParser
-     *
-     * @return InteractsWithWebsocket
-     */
-    public function setPayloadParser(Parser $payloadParser)
-    {
-        $this->payloadParser = $payloadParser;
-
-        return $this;
-    }
-
-    /**
-     * Get frame parser for websocket.
-     */
-    public function getPayloadParser()
-    {
-        return $this->payloadParser;
+        }, $fd);
     }
 
     /**
@@ -203,15 +126,20 @@ trait InteractsWithWebsocket
      */
     protected function prepareWebsocket()
     {
-        $config      = $this->container->make('config');
-        $isWebsocket = $config->get('swoole.websocket.enabled');
-        $parser      = $config->get('swoole.websocket.parser', SocketioParser::class);
-
-        if ($isWebsocket) {
-            $this->events            = array_merge($this->events ?? [], $this->wsEvents);
-            $this->isServerWebsocket = true;
-            $this->setPayloadParser(new $parser);
+        if (!$this->isWebsocketServer = $this->getConfig('websocket.enable', false)) {
+            return;
         }
+
+        $this->events = array_merge($this->events ?? [], $this->wsEvents);
+
+        $this->prepareWebsocketRoom();
+
+        $this->onEvent('workerStart', function () {
+            $this->bindWebsocketRoom();
+            $this->bindWebsocketParser();
+            $this->bindWebsocketHandler();
+            $this->prepareWebsocketListener();
+        });
     }
 
     /**
@@ -221,10 +149,42 @@ trait InteractsWithWebsocket
      *
      * @return bool
      */
-    protected function isServerWebsocket(int $fd): bool
+    protected function isWebsocketServer(int $fd): bool
     {
-        return (bool) $this->container->make(SwooleServer::class)
-                          ->connection_info($fd)['websocket_status'] ?? false;
+        return $this->getServer()->getClientInfo($fd)['websocket_status'] ?? false;
+    }
+
+    /**
+     * Prepare websocket room.
+     */
+    protected function prepareWebsocketRoom()
+    {
+        // create room instance and initialize
+        $this->websocketRoom = $this->container->make(Room::class);
+        $this->websocketRoom->prepare();
+    }
+
+    protected function prepareWebsocketListener()
+    {
+        $listeners = $this->getConfig('websocket.listen', []);
+
+        foreach ($listeners as $event => $listener) {
+            $this->app->event->listen('swoole.websocket.' . Str::studly($event), $listener);
+        }
+
+        $subscribers = $this->getConfig('websocket.subscribe', []);
+
+        foreach ($subscribers as $subscriber) {
+            $this->app->event->observe($subscriber, 'swoole.websocket.');
+        }
+
+        //消息推送任务
+        $this->app->event->listen('swoole.task', function (Task $task, App $app) {
+            if ($this->isWebsocketPushPayload($task->data)) {
+                $pusher = $app->make(Pusher::class, $task->data['data']);
+                $pusher->push();
+            }
+        });
     }
 
     /**
@@ -232,96 +192,30 @@ trait InteractsWithWebsocket
      *
      * @throws \Exception
      */
-    protected function prepareWebsocketHandler()
+    protected function bindWebsocketHandler()
     {
-        $handlerClass = $this->container->make('config')->get('swoole.websocket.handler', Handler::class);
+        $handlerClass = $this->getConfig('websocket.handler', Handler::class);
 
-        if (!$handlerClass) {
-            throw new RuntimeException('Websocket handler is not set in swoole.websocket config');
-        }
+        $this->app->bind(HandlerInterface::class, $handlerClass);
 
-        $this->setWebsocketHandler($this->app->make($handlerClass));
+        $this->app->make(HandlerInterface::class);
+    }
+
+    protected function bindWebsocketParser()
+    {
+        $parserClass = $this->getConfig('websocket.parser', SocketioParser::class);
+
+        $this->app->bind(ParserInterface::class, $parserClass);
+
+        $this->app->make(ParserInterface::class);
     }
 
     /**
-     * Set websocket handler.
-     *
-     * @param HandlerContract $handler
-     *
-     * @return InteractsWithWebsocket
+     * Bind room instance to app container.
      */
-    public function setWebsocketHandler(HandlerContract $handler)
+    protected function bindWebsocketRoom(): void
     {
-        $this->websocketHandler = $handler;
-
-        return $this;
-    }
-
-    /**
-     * Get websocket handler.
-     *
-     * @return HandlerContract
-     */
-    public function getWebsocketHandler(): HandlerContract
-    {
-        return $this->websocketHandler;
-    }
-
-    /**
-     * @param string $class
-     * @param array  $settings
-     *
-     * @return RoomContract
-     */
-    protected function createRoom(string $class, array $settings): RoomContract
-    {
-        return new $class($settings);
-    }
-
-    /**
-     * Bind room instance to Laravel app container.
-     */
-    protected function bindRoom(): void
-    {
-        $this->app->bind(RoomContract::class, function (App $app) {
-            $config = $app->make('config');
-            $room   = $config->get('swoole.websocket.room', []);
-
-            $className = Arr::pull($room, 'type', TableRoom::class);
-
-            // create room instance and initialize
-            $room = $this->createRoom($className, $room);
-            $room->prepare();
-
-            return $room;
-        });
-
-        $this->app->bind('swoole.room', RoomContract::class);
-    }
-
-    /**
-     * Bind websocket instance to Laravel app container.
-     */
-    protected function bindWebsocket()
-    {
-        $this->app->bind(Websocket::class, function (App $app) {
-            return new Websocket($app, $app->make(RoomContract::class));
-        });
-
-        $this->app->bind('swoole.websocket', Websocket::class);
-    }
-
-    /**
-     * Load websocket routes file.
-     */
-    protected function loadWebsocketRoutes()
-    {
-        $routePath = $this->container->make('config')
-            ->get('swoole.websocket.route_file');
-
-        if (file_exists($routePath)) {
-            return require $routePath;
-        }
+        $this->app->instance(Room::class, $this->websocketRoom);
     }
 
     /**
@@ -337,7 +231,7 @@ trait InteractsWithWebsocket
             return false;
         }
 
-        return $this->isServerWebsocket
+        return $this->isWebsocketServer
             && ($payload['action'] ?? null) === Websocket::PUSH_ACTION
             && array_key_exists('data', $payload);
     }

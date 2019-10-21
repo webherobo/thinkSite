@@ -1,13 +1,13 @@
 <?php
 
-use think\swoole\websocket\room\TableRoom;
+use think\swoole\rpc\JsonParser;
 use think\swoole\websocket\socketio\Handler;
 use think\swoole\websocket\socketio\Parser;
 
 return [
-    'server'           => [
-        'host'      => '0.0.0.0', // 监听地址
-        'port'      => 80, // 监听端口
+    'server'     => [
+        'host'      => env('SWOOLE_HOST', '127.0.0.1'), // 监听地址
+        'port'      => env('SWOOLE_PORT', 80), // 监听端口
         'mode'      => SWOOLE_PROCESS, // 运行模式 默认为SWOOLE_PROCESS
         'sock_type' => SWOOLE_SOCK_TCP, // sock type 默认为SWOOLE_SOCK_TCP
         'options'   => [
@@ -18,6 +18,8 @@ return [
             'reactor_num'           => swoole_cpu_num(),
             'worker_num'            => swoole_cpu_num(),
             'task_worker_num'       => swoole_cpu_num(),
+            'task_enable_coroutine' => true,
+            'task_max_request'      => 3000,
             'enable_static_handler' => true,
             'document_root'         => root_path('public'),
             'package_max_length'    => 20 * 1024 * 1024,
@@ -27,28 +29,68 @@ return [
             'send_yield'            => true,
         ],
     ],
-    'websocket'        => [
-        'enabled'       => false,
+    'websocket'  => [
+        'enable'        => false,
         'handler'       => Handler::class,
         'parser'        => Parser::class,
-        'route_file'    => base_path() . 'websocket.php',
         'ping_interval' => 25000,
         'ping_timeout'  => 60000,
         'room'          => [
-            'type'        => TableRoom::class,
-            'room_rows'   => 4096,
-            'room_size'   => 2048,
-            'client_rows' => 8192,
-            'client_size' => 2048,
+            'type'  => 'table',
+            'table' => [
+                'room_rows'   => 4096,
+                'room_size'   => 2048,
+                'client_rows' => 8192,
+                'client_size' => 2048,
+            ],
+            'redis' => [
+
+            ],
+        ],
+        'listen'        => [],
+        'subscribe'     => [],
+    ],
+    'rpc'        => [
+        'server' => [
+            'enable'   => false,
+            'port'     => 9000,
+            'parser'   => JsonParser::class,
+            'services' => [
+            ],
+        ],
+        'client' => [
         ],
     ],
-    'hot_update'       => [
-        'enable'  => env('app_debug', false),
+    'hot_update' => [
+        'enable'  => env('APP_DEBUG', false),
         'name'    => ['*.php'],
         'include' => [app_path()],
         'exclude' => [],
     ],
-    'enable_coroutine' => true,
-    'resetters'        => [],
-    'tables'           => [],
+    //连接池
+    'pool'       => [
+        'db'    => [
+            'enable'        => true,
+            'max_active'    => 3,
+            'max_wait_time' => 5,
+        ],
+        'cache' => [
+            'enable'        => true,
+            'max_active'    => 3,
+            'max_wait_time' => 5,
+        ],
+    ],
+    'coroutine'  => [
+        'enable' => true,
+        'flags'  => SWOOLE_HOOK_ALL,
+    ],
+    'tables'     => [],
+    //每个worker里需要预加载以共用的实例
+    'concretes'  => [],
+    //重置器
+    'resetters'  => [],
+    //每次请求前需要清空的实例
+    'instances'  => [],
+    //每次请求前需要重新执行的服务
+    'services'   => [],
 ];

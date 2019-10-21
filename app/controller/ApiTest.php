@@ -56,7 +56,7 @@ class ApiTest extends ApiBase
     }
 
     //REDIS锁
-    public function redislock()
+    public function redislock($type)
     {
         $fp = fopen(app()->getRootPath() . "runtime/redislock.log", "a+");
         $redLock =$this->app->lockService;
@@ -64,9 +64,9 @@ class ApiTest extends ApiBase
         while ($i>0) {
             $lock = $redLock->lock('test', 10000);
             if ($lock) {
-                fwrite($fp, json_encode($lock) . $i."->lock进程\n");
+                fwrite($fp, json_encode($lock) . $i."->$type lock进程\n");
             } else {
-                fwrite($fp, json_encode($lock) . $i."Lock not acquired->lock进程\n");
+                fwrite($fp, json_encode($lock) . $i."Lock not acquired->$type lock进程\n");
             }
             $i--;
         }
