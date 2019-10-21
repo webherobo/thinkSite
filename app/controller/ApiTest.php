@@ -79,7 +79,7 @@ class ApiTest extends ApiBase
         $userModel=new User();
         $userdata=$userModel->where(["id"=>1])->lock($type)->find();
         $userdata->inc('score')->update();
-        return ["code"=>0,"message"=>"ok","data"=>[]];
+        return $this->return(0,['message'=>"ok",'data'=>$userdata]);
     }
 
 }
