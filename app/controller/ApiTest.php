@@ -78,7 +78,7 @@ class ApiTest extends ApiBase
     public function dblock($type=false){
         $userModel=new User();
         $userdata=$userModel->where(["id"=>1])->lock($type)->find();
-        $userdata->setInc('score');
+        $userdata->inc('score')->update();
         return ["code"=>0,"message"=>"ok","data"=>[]];
     }
 
