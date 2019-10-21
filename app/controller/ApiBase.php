@@ -9,9 +9,9 @@ class ApiBase extends BaseController
 {
 
     //统一返回格式
-    public static function return($statusCode, $data = [])
+    public static function return($data = [])
     {
-        return json($data,self::code($statusCode));
+        return json($data,self::code($data["code"]));
     }
     //状态码转换
     public static function code($code=0){
