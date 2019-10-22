@@ -18,7 +18,7 @@ return [
         'database' => [
             'type'  => 'database',
             'queue' => 'default',
-            'table' => 'jobs',
+            'table' => 'cbn_queue_jobs',
         ],
         'redis'    => [
             'type'       => 'redis',

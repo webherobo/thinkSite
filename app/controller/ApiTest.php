@@ -129,7 +129,7 @@ class ApiTest extends ApiBase
     public function queuejob()
     {
         $fp = fopen(app()->getRootPath() . "runtime/queuelog.log", "a+");
-        $taskType = $_GET['taskType'];
+        $taskType = $_GET['taskType']??'taskA';
         switch ($taskType) {
             case 'taskA':
                 $jobHandlerClassName = 'application\job\MultiTask@taskA';
