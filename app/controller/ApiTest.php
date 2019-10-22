@@ -133,12 +133,12 @@ class ApiTest extends ApiBase
         $taskType = $_GET['taskType']??'taskA';
         switch ($taskType) {
             case 'taskA':
-                $jobHandlerClassName = 'application\job\MultiTask@taskA';
+                $jobHandlerClassName = 'application\job\Hello@taskA';
                 $jobDataArr = ['a' => '1'];
                 $jobQueueName = "multiTaskJobQueue";
                 break;
             case 'taskB':
-                $jobHandlerClassName = 'application\job\MultiTask@taskB';
+                $jobHandlerClassName = 'application\job\Hello@taskB';
                 $jobDataArr = ['b' => '2'];
                 $jobQueueName = "multiTaskJobQueue";
                 break;
