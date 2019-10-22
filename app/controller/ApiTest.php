@@ -8,6 +8,7 @@ namespace app\controller;
 use think\facade\Cache;
 USE app\model\User;
 use think\facade\Db;
+use think\facade\Queue;
 
 class ApiTest extends ApiBase
 {
