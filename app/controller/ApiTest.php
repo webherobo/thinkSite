@@ -7,6 +7,7 @@ namespace app\controller;
 
 use think\facade\Cache;
 USE app\model\User;
+use think\facade\Db;
 
 class ApiTest extends ApiBase
 {
@@ -59,14 +60,14 @@ class ApiTest extends ApiBase
     public function redislock($type)
     {
         $fp = fopen(app()->getRootPath() . "runtime/redislock.log", "a+");
-        $redLock =$this->app->lockService;
-        static $i=10;
-        while ($i>0) {
+        $redLock = $this->app->lockService;
+        static $i = 10;
+        while ($i > 0) {
             $lock = $redLock->lock('test', 10000);
             if ($lock) {
-                fwrite($fp, json_encode($lock) . $i."->$type lock进程\n");
+                fwrite($fp, json_encode($lock) . $i . "->$type lock进程\n");
             } else {
-                fwrite($fp, json_encode($lock) . $i."Lock not acquired->$type lock进程\n");
+                fwrite($fp, json_encode($lock) . $i . "Lock not acquired->$type lock进程\n");
             }
             $i--;
         }
@@ -74,12 +75,106 @@ class ApiTest extends ApiBase
         fclose($fp);
         return "ok!";
     }
+
     //db锁
-    public function dblock($type=false){
+    public function dblock($type = false)
+    {
+        static $i=1;
+        Cache::set('mytestnum', ++$i);
+        return $i;exit;
+
+
+        $type=false;
         $userModel=new User();
-        $userdata=$userModel->where(["id"=>1])->lock($type)->find();
-        $userdata->inc('score')->update();
-        return $this->return(['code'=>0,'message'=>"ok",'data'=>$userdata]);
+
+        $fp = fopen(app()->getRootPath() . "runtime/dblockapp2.log", "a+");
+        $lock=$this->app->lockService->lock('test', 10000);
+        if($lock){
+            Db::startTrans();
+            $userdata=$userModel->where(["id"=>1])->lock($type)->find();
+            //fwrite($fp, $userdata['score']. "LOCK_no Write something here\n");
+            try {
+                //     $userdata=Db::table("user")->where(["id"=>1])->inc('score')->update();
+                //	sleep(1);
+                //$data=Db::table("user")->where(["id"=>1])->lock(true)->select();
+                //fwrite($fp, $data["0"]['score']. "newLOCK_no Write something here\n");
+
+                if($lock&&$userdata['score']>0){
+                    $userdata->dec('score')->update();
+                    fwrite($fp, $userdata['score']. "newLOCK_ye Write something here\n");
+                    //Db::query("update user set version=version+1 where id=1 ");
+                    //sleep(1);
+                    //$userdata=Db::table("user")->where(["id"=>1])->dec('score')->update();
+
+                }else{
+                    fwrite($fp, "newNoLOCK_ye Write something here\n");
+                }
+
+                Db::commit();
+                sleep(3);
+                $this->app->lockService->unlock($lock);
+            }catch (\Exception $e){
+                Db::rollback();
+                fwrite($fp, "回滚LOCK_ye Write something here\n");
+            }
+        }
+        fwrite($fp, "outLOCK_no Write something here\n");
+        fclose($fp);
+        return $this->return(['code'=>0,'message'=>"ok",'data'=>[]]);
+    }
+
+    //队列任务
+    // 开启消息对列 php /home/wwwroot/default/gd/think queue:restart
+    //监听消息的命令 php think queue:work --daemon --queue templatesend1
+    public function queuejob()
+    {
+        $fp = fopen(app()->getRootPath() . "runtime/queuelog.log", "a+");
+        $taskType = $_GET['taskType'];
+        switch ($taskType) {
+            case 'taskA':
+                $jobHandlerClassName = 'application\job\MultiTask@taskA';
+                $jobDataArr = ['a' => '1'];
+                $jobQueueName = "multiTaskJobQueue";
+                break;
+            case 'taskB':
+                $jobHandlerClassName = 'application\job\MultiTask@taskB';
+                $jobDataArr = ['b' => '2'];
+                $jobQueueName = "multiTaskJobQueue";
+                break;
+            default:
+                break;
+        }
+        // Queue::push( $jobHandlerObject ,null , $jobQueueName );
+        //// 这时，需要在 $jobHandlerObject 中定义一个 handle() 方法，消息队列在执行到该任务时会自动反序列化该对象，并调用其 handle()方法。 该方式中, 数据需要提前挂载在 $jobHandlerObject 对象上。
+        $isPushed = Queue::push($jobHandlerClassName, $jobDataArr, $jobQueueName);
+        if ($isPushed !== false) {
+            fwrite($fp, "the $taskType of MultiTask Job has been Pushed to " . $jobQueueName . "<br>");
+        } else {
+            fwrite($fp, "push a new $taskType of MultiTask Job Failed!");
+        }
+
+
+        // 1.当前任务将由哪个类来负责处理。
+        //   当轮到该任务时，系统将生成一个该类的实例，并调用其 fire 方法
+        $jobHandlerClassName = 'app\job\Hello';
+
+        // 2.当前任务归属的队列名称，如果为新队列，会自动创建
+        $jobQueueName = "helloJobQueue";
+
+        // 3.当前任务所需的业务数据 . 不能为 resource 类型，其他类型最终将转化为json形式的字符串
+        //   ( jobData 为对象时，存储其public属性的键值对 )
+        $jobData = ['ts' => time(), 'bizId' => uniqid(), 'a' => 1];
+
+        // 4.将该任务推送到消息队列，等待对应的消费者去执行
+        $isPushed = Queue::push($jobHandlerClassName, $jobData, $jobQueueName);
+
+        // database 驱动时，返回值为 1|false  ;   redis 驱动时，返回值为 随机字符串|false
+        if ($isPushed !== false) {
+            fwrite($fp, date('Y-m-d H:i:s') . " a new Hello Job is Pushed to the MQ" . "<br>");
+        } else {
+            fwrite($fp, 'Oops, something went wrong.');
+        }
+        fclose($fp);
     }
 
 }

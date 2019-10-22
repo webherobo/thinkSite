@@ -10,7 +10,7 @@
 // +----------------------------------------------------------------------
 
 return [
-    'default'     => 'sync',
+    'default'     => 'redis',
     'connections' => [
         'sync'     => [
             'type' => 'sync',
@@ -29,6 +29,7 @@ return [
             'select'     => 0,
             'timeout'    => 0,
             'persistent' => false,
+            'expire'     => 60,		// 任务的过期时间，默认为60秒; 若要禁用，则设置为 null
         ],
     ],
     'failed'      => [
