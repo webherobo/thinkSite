@@ -120,6 +120,7 @@ class ComposerStaticInit08b4b6552aaae49c95aa13b9dc91d4e5
             'PhpOffice\\PhpWord\\' => 18,
             'PhpOffice\\PhpSpreadsheet\\' => 25,
             'PhpOffice\\Common\\' => 17,
+            'PhpAmqpLib\\' => 11,
             'Phinx\\' => 6,
         ),
         'O' => 
@@ -267,6 +268,10 @@ class ComposerStaticInit08b4b6552aaae49c95aa13b9dc91d4e5
         'PhpOffice\\Common\\' => 
         array (
             0 => __DIR__ . '/..' . '/phpoffice/common/src/Common',
+        ),
+        'PhpAmqpLib\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/php-amqplib/php-amqplib/PhpAmqpLib',
         ),
         'Phinx\\' => 
         array (

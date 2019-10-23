@@ -1,0 +1,3 @@
+#!/bin/bash
+php think queue:work  --queue  helloJobQueue
+php think queue:work  --queue multiTaskJobQueue
