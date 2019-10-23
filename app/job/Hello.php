@@ -7,6 +7,8 @@
 namespace app\job;
 
 use think\queue\Job;
+USE app\model\User;
+use think\facade\Db;
 
 class Hello
 {
@@ -18,7 +20,7 @@ class Hello
      */
     public function fire(Job $job, $data)
     {
-        $fp = fopen(app()->getRootPath() . "runtime/queuelog.log", "a+");
+        $fp = fopen(app()->getRootPath() . "runtime/queuejoblog.log", "a+");
         // 有些消息在到达消费者时,可能已经不再需要执行了
         $isJobStillNeedToBeDone = $this->checkDatabaseToSeeIfJobNeedToBeDone($data);
         if (!$isJobStillNeedToBeDone) {
@@ -26,22 +28,23 @@ class Hello
             return;
         }
 
-        $isJobDone = $this->doHelloJob($data, $fp);
-
+        $isJobDone = $this->doHelloJob($data);
+        // $isJobDone=true;
         if ($isJobDone) {
             // 如果任务执行成功， 记得删除任务
             $job->delete();
-            fwrite($fp, 'Hello Job has been done and deleted!');
+            fwrite($fp, "Hello Job has been done and deleted!\n");
         } else {
             if ($job->attempts() > 3) {
                 //通过这个方法可以检查这个任务已经重试了几次了
-                fwrite($fp, 'Hello Job has been retried more than 3 times!');
+                // fwrite($fp, 'Hello Job has been retried more than 3 times!');
                 $job->delete();
 
                 // 也可以重新发布这个任务
                 //print("<info>Hello Job will be availabe again after 2s."."</info>\n");
                 //$job->release(2); //$delay为延迟时间，表示该任务延迟2秒后再执行
             }
+            fwrite($fp, "Hello Job failed!\n");
         }
         fclose($fp);
     }
@@ -59,11 +62,41 @@ class Hello
     /**
      * 根据消息中的数据进行实际的业务处理...
      */
-    private function doHelloJob($data, $fp)
+    public function doHelloJob($data)
     {
-        fwrite($fp, "Hello Job is Fired at " . date('Y-m-d H:i:s') . 'Hello Job Started. job Data is: ' . var_export($data, true) . 'Hello Job is Done!');
+        try {
+            $fp = fopen(app()->getRootPath() . "runtime/queuejoblog.log", "a+");
+            $lock = app()->lockService->lock('queuetest', 10000);
+            $type = false;
+            $userModel = new User();
+            if ($lock) {
+                Db::startTrans();
+                $userdata = $userModel->where(["id" => 1])->lock($type)->find();
+                try {
+                    if ($lock && $userdata['score'] > 0) {
+                        $userdata->inc('score')->update();
+                        fwrite($fp, $userdata['score'] . "newLOCK_ye Write something here\n");
+                    } else {
+                        fwrite($fp, "newNoLOCK_ye Write something here\n");
+                    }
+                    Db::commit();
+                    //sleep(3);
+                    app()->lockService->unlock($lock);
+                } catch (\Exception $e) {
+                    Db::rollback();
+                    fwrite($fp, "回滚LOCK_ye Write something here\n");
+                }
+                fwrite($fp, "任务数据:" . json_encode($data) . " Write something here\n");
+                fclose($fp);
+                return true;
+            } else {
+                return false;
+            }
 
-        return true;
+        } catch (\Exception $e) {
+            fwrite($fp, $$e->getMessage() . "\n");
+        }
+
     }
 
     //多个小任务的话，在发布任务时，需要用 任务的类名@方法名 如 app\lib\job\Job2@task1、app\lib\job\Job2@task2
@@ -74,7 +107,7 @@ class Hello
 
         if ($isJobDone) {
             $job->delete();
-            print("Info: TaskA of Job MultiTask has been done and deleted" . "\n");
+            // print("Info: TaskA of Job MultiTask has been done and deleted" . "\n");
         } else {
             if ($job->attempts() > 3) {
                 $job->delete();
@@ -89,7 +122,7 @@ class Hello
 
         if ($isJobDone) {
             $job->delete();
-            print("Info: TaskB of Job MultiTask has been done and deleted" . "\n");
+            // print("Info: TaskB of Job MultiTask has been done and deleted" . "\n");
         } else {
             if ($job->attempts() > 2) {
                 $job->release();
@@ -125,7 +158,7 @@ class Hello
     public function failed($jobData)
     {
         $fp = fopen(app()->getRootPath() . "runtime/queuelog.log", "a+");
-        fwrite($fp, 'Warning: Job failed after max retries. job data is :'. var_export($jobData, true) . "\n");
+        fwrite($fp, 'Warning: Job failed after max retries. job data is :' . var_export($jobData, true) . "\n");
         fclose($fp);
     }
 }
