@@ -4,11 +4,11 @@
  */
 return [
     'rabbit_mq' => [
-        'host' => ip,
+        'host' => "localhost",
         'port' => 5672,
-        'user' => 'root',
-        'pwd' => 'xxx',
-        'vhost' => 'my_vhost',//虚拟主机(项目队列隔离使用)
+        'user' => 'webherobo',
+        'pwd' => 'admin123',
+        'vhost' => 'vhost_rabbitmq',//虚拟主机(项目队列隔离使用)
         'rabbit_mq_queue' => [
             'test' => [
                 'exchange_name' => 'ex_test', // 交换机名称
