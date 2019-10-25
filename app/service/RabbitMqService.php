@@ -64,6 +64,7 @@ class RabbitMqService extends Service
         if (empty($mqdata)) {
             $mqConf = config('rabbit_mq')["rabbit_mq_queue"]["test"];
         }
+        $this->mqConf = config('rabbit_mq');
         //建立生产者与mq之间的连接
         $this->conn = new AMQPStreamConnection(
             $this->mqConf['host'], $this->mqConf['port'], $this->mqConf['user'], $this->mqConf['pwd'], $this->mqConf['vhost']
