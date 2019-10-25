@@ -47,7 +47,7 @@ class RabbitMqService extends Service
         // 获取rabbitmq所有配置
         $rabbitMqConf = config('rabbit_mq');
         if (!isset($rabbitMqConf['rabbit_mq_queue'])) {
-            die('没有定义Source.rabbit_mq');
+            die('没有定义Source.rabbit_mq'.json_encode( $rabbitMqConf));
         }
         //建立生产者与mq之间的连接
         $this->conn = new AMQPStreamConnection(
