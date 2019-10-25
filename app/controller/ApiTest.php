@@ -80,19 +80,20 @@ class ApiTest extends ApiBase
     //db锁
     public function dblock($type = false)
     {
-        static $i=1;
+        static $i = 1;
         Cache::set('mytestnum', ++$i);
-        return $i;exit;
+        return $i;
+        exit;
 
 
-        $type=false;
-        $userModel=new User();
+        $type = false;
+        $userModel = new User();
 
         $fp = fopen(app()->getRootPath() . "runtime/dblockapp2.log", "a+");
-        $lock=$this->app->lockService->lock('test', 10000);
-        if($lock){
+        $lock = $this->app->lockService->lock('test', 10000);
+        if ($lock) {
             Db::startTrans();
-            $userdata=$userModel->where(["id"=>1])->lock($type)->find();
+            $userdata = $userModel->where(["id" => 1])->lock($type)->find();
             //fwrite($fp, $userdata['score']. "LOCK_no Write something here\n");
             try {
                 //     $userdata=Db::table("user")->where(["id"=>1])->inc('score')->update();
@@ -100,28 +101,28 @@ class ApiTest extends ApiBase
                 //$data=Db::table("user")->where(["id"=>1])->lock(true)->select();
                 //fwrite($fp, $data["0"]['score']. "newLOCK_no Write something here\n");
 
-                if($lock&&$userdata['score']>0){
+                if ($lock && $userdata['score'] > 0) {
                     $userdata->dec('score')->update();
-                    fwrite($fp, $userdata['score']. "newLOCK_ye Write something here\n");
+                    fwrite($fp, $userdata['score'] . "newLOCK_ye Write something here\n");
                     //Db::query("update user set version=version+1 where id=1 ");
                     //sleep(1);
                     //$userdata=Db::table("user")->where(["id"=>1])->dec('score')->update();
 
-                }else{
+                } else {
                     fwrite($fp, "newNoLOCK_ye Write something here\n");
                 }
 
                 Db::commit();
                 sleep(3);
                 $this->app->lockService->unlock($lock);
-            }catch (\Exception $e){
+            } catch (\Exception $e) {
                 Db::rollback();
                 fwrite($fp, "回滚LOCK_ye Write something here\n");
             }
         }
         fwrite($fp, "outLOCK_no Write something here\n");
         fclose($fp);
-        return $this->return(['code'=>0,'message'=>"ok",'data'=>[]]);
+        return $this->return(['code' => 0, 'message' => "ok", 'data' => []]);
     }
 
     //队列任务
@@ -130,7 +131,7 @@ class ApiTest extends ApiBase
     public function queuejob()
     {
         $fp = fopen(app()->getRootPath() . "runtime/queuelog.log", "a+");
-        $taskType = $_GET['taskType']??'taskA';
+        $taskType = $_GET['taskType'] ?? 'taskA';
         switch ($taskType) {
             case 'taskA':
                 $jobHandlerClassName = 'app\job\Hello@taskA';
@@ -176,6 +177,29 @@ class ApiTest extends ApiBase
             fwrite($fp, 'Oops, something went wrong.');
         }
         fclose($fp);
+    }
+    //生产者
+    public function rabbitMqProducer()
+    {
+        $fp = fopen(app()->getRootPath() . "runtime/rabbitmq.log", "a+");
+        $mqConf = config('rabbit_mq')["rabbit_mq_queue"]["test"];
+        $rabbitMqService = $this->app->RabbitMqService->instance($mqConf);
+        $data = ["name" => "webherobo"];
+        $rabbitMqService->wMq($data);
+        fwrite($fp, '数据入队.');
+        fclose($fp);
+    }
+    //消费者
+    public function RabbitMqConsumer(){
+
+        $mqConf = config('rabbit_mq')["rabbit_mq_queue"]["test"];
+        $rabbitMqService = $this->app->RabbitMqService->instance($mqConf);
+        //队列别名 ,进程数 ,-d(守护进程) | -s (杀死进程)
+        $argv=['test','fire'];
+        $rabbitMqService->rabbitMqConsumer($argv);
+        $rabbitMqConsumer=new \ReflectionClass("RabbitMqConsumer");
+        $rabbitMqConsumer->other($argv);
+        echo "ok!";
     }
 
 }

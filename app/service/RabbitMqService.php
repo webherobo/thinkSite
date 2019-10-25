@@ -7,64 +7,8 @@ use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 use think\Service;
 
-class RabbitmqService extends Service
+class RabbitMqService extends Service
 {
-
-    /**
-     * 注册服务
-     *
-     * @return mixed
-     */
-    public function register()
-    {
-        //
-    }
-
-
-    /**
-     * 执行服务
-     *
-     * @return mixed
-     */
-    public function boot()
-    {
-        //
-    }
-
-    //测试
-    public function test()
-    {
-
-        //this::instance('test')->wMq(['name'=>'123']);//入队
-        $rabitmqConfig = config('rabbit_mq');
-        $exchangeName = $rabitmqConfig["rabbit_mq_queue"]["test"]["exchange_name"]; //交换机名
-        $queueName = $rabitmqConfig["rabbit_mq_queue"]["test"]["queue_name"]; //队列名称
-        $routingKey = $rabitmqConfig["rabbit_mq_queue"]["test"]["DealTest"]; //路由关键字(也可以省略)
-
-        $conn = new AMQPStreamConnection( //建立生产者与mq之间的连接
-            $rabitmqConfig['host'], $rabitmqConfig['port'], $rabitmqConfig['user'], $rabitmqConfig['pwd'], $rabitmqConfig['vhost']
-        );
-        $channel = $conn->channel(); //在已连接基础上建立生产者与mq之间的通道
-
-
-        $channel->exchange_declare($exchangeName, 'direct', false, true, false); //声明初始化交换机
-        $channel->queue_declare($queueName, false, true, false, false); //声明初始化一条队列
-        $channel->queue_bind($queueName, $exchangeName, $routingKey); //将队列与某个交换机进行绑定，并使用路由关键字
-
-        $msgBody = json_encode(["name" => "iGoo", "age" => 22]);
-        $msg = new AMQPMessage($msgBody, ['content_type' => 'text/plain', 'delivery_mode' => 2]); //生成消息
-        $r = $channel->basic_publish($msg, $exchangeName, $routingKey); //推送消息到某个交换机
-        $channel->close();
-        $conn->close();
-    }
-
-
-}
-
-class producer
-{
-
-
     /**
      * User: webherobo
      * @var
@@ -75,10 +19,30 @@ class producer
     private $mqConf;
 
     /**
-     * RabbitMQTool constructor.
-     * @param $mqName
+     * 消费者
+     * @throws \Exception
      */
-    public function __construct($mqName)
+    private $dealPath = null;
+
+    private $childsPid = array();
+
+    /**
+     * 注册服务
+     *
+     * @return mixed
+     */
+    public function register()
+    {
+        $this->app->bind('rabbitMqService', RabbitmqService::class);
+    }
+
+
+    /**
+     * 执行服务
+     *
+     * @return mixed
+     */
+    public function boot()
     {
         // 获取rabbitmq所有配置
         $rabbitMqConf = config('rabbit_mq');
@@ -89,20 +53,7 @@ class producer
         $this->conn = new AMQPStreamConnection(
             $rabbitMqConf['host'], $rabbitMqConf['port'], $rabbitMqConf['user'], $rabbitMqConf['pwd'], $rabbitMqConf['vhost']
         );
-        $channal = $this->conn->channel();
-        if (!isset($rabbitMqConf['rabbit_mq_queue'][$mqName])) {
-            die('没有定义' . $mqName);
-        }
-        // 获取具体mq信息
-        $mqConf = $rabbitMqConf['rabbit_mq_queue'][$mqName];
-        $this->mqConf = $mqConf;
-        // 声明初始化交换机
-        $channal->exchange_declare($mqConf['exchange_name'], 'direct', false, true, false);
-        // 声明初始化一条队列
-        $channal->queue_declare($mqConf['queue_name'], false, true, false, false);
-        // 交换机队列绑定
-        $channal->queue_bind($mqConf['queue_name'], $mqConf['exchange_name']);
-        $this->channel = $channal;
+        $this->channel = $this->conn->channel();
     }
 
     /**
@@ -111,9 +62,20 @@ class producer
      * @return RabbitMQTool
      * Description: 返回当前实例
      */
-    public static function instance($mqName)
+    public function instance($mqConf = [])
     {
-        return new RabbitMQTool($mqName);
+        if (empty($mqdata)) {
+            $mqConf = config('rabbit_mq')["rabbit_mq_queue"]["test"];
+        }
+        // 获取具体mq信息
+        $this->mqConf = $mqConf;
+        // 声明初始化交换机
+        $this->channel->exchange_declare($mqConf['exchange_name'], 'direct', false, true, false);
+        // 声明初始化一条队列
+        $this->channel->queue_declare($mqConf['queue_name'], false, true, false, false);
+        // 交换机队列绑定
+        $this->channel->queue_bind($mqConf['queue_name'], $mqConf['exchange_name']);
+        return $this;
     }
 
     /**
@@ -166,71 +128,55 @@ class producer
         $this->channel->close();
         $this->conn->close();
     }
-}
-
-class consumer
-{
-    /**
-     * 消费者
-     * @throws \Exception
-     */
-    private $dealPath = null;
-
-    private $childsPid = array();
 
     /**
-     * StartRabbitMQ constructor.
+     * RabbitMqConsumer.
+     * $argv=[,$queuename,$type]; 参数 $queuename默认取值config('rabbit_mq')["rabbit_mq_queue"]["test"] ;$type:'-d'||'-s';
      */
-    public function __construct()
+    public function rabbitMqConsumer($argv)
     {
+        $argv[0] ?? $argv[0] = 'test';
+        $argv[1] ?? $argv[1] = 'fire';
+        $argv[2] ?? $argv[2] = '-d';
+        $argv[3] ?? $argv[3]=1;
         // 脚本路径
-        $this->dealPath = str_replace('/', '\\', "/app/daemon/deal/");
-    }
-
-    /**
-     * User: webherobo
-     * Description: 返回当前实例
-     */
-    public static function instance()
-    {
-        return new RabbitmqService();
-    }
-
-    /**
-     * User: webherobo
-     * Description: 主要处理流程
-     * @throws \ErrorException
-     */
-    public function main()
-    {
-        global $argv;
+        $this->dealPath = str_replace('/', '\\', "/app/job/");
         // 扩展参数
-        if (isset($argv[3])) {
-            switch ($argv[3]) {
+        if (isset($argv[2])) {
+            switch ($argv[2]) {
                 case '-d': // 守护进程启动
                     $this->daemonStart();
                     break;
                 case '-s': // 杀死进程
-                    $this->killEasyExport($argv[2]);
+                    $this->killEasyExport($argv[0]);
                     die();
                     break;
             }
         }
         // 判断参数
-        if (count($argv) < 2) {
+        if (count($argv) < 4) {
             die('缺少参数');
         }
         // 获取配置信息
         $rabbitMqConf = config('rabbit_mq');
-        if (!isset($rabbitMqConf['rabbit_mq_queue'][$argv[2]])) {
-            die('没有配置:' . $argv[2]);
+        if (!isset($rabbitMqConf['rabbit_mq_queue'][$argv[0]])) {
+            die('没有配置:' . $argv[0]);
         }
         // 获取mq配置
-        $mqConf = $rabbitMqConf['rabbit_mq_queue'][$argv[2]];
-        // 实例化处理脚本
-        $dealClass = $this->dealPath . $mqConf['consumer'];
-        $dealObj = new $dealClass;
-        $processNum = 1;
+        $mqConf = $rabbitMqConf['rabbit_mq_queue'][$argv[0]];
+        if(!empty($this->dealPath)){
+            // 实例化处理脚本
+            $dealClass = $this->dealPath . $mqConf['consumer'];
+        }else{
+            $dealClass=$mqConf['consumer'];
+//            $dealReflection = new \ReflectionClass($dealClass);  // 将类名consumer作为参数，即可建立consumer类的反射类
+//            $dealObj = $dealReflection->newInstance();
+//            $getconfig = $dealReflection->getMethod('config')->setAccessible(true);
+            $dealReflection=new \ReflectionMethod($dealClass, 'config');
+            $mqConf=$dealReflection->setAccessible(true)->invoke();
+        }
+
+        $processNum = $argv[3];
         if (isset($mqConf['process_num']) || !is_numeric($mqConf['process_num']) || $mqConf['process_num'] < 1 || $mqConf['process_num'] > 10) {
             $processNum = $mqConf['process_num'];
         }
@@ -243,7 +189,7 @@ class consumer
             if ($pid < 0) {
                 exit();
             } else if (0 == $pid) {
-                $this->downMqData($dealObj, $argv, $mqConf);
+                $this->downMqData($dealClass, $argv, $mqConf);
                 exit();
             } else if ($pid > 0) {
                 $this->childsPid[] = $pid;
@@ -262,12 +208,13 @@ class consumer
      * @throws \ErrorException
      * Description:
      */
-    private function downMqData($dealObj, $argv, $mqConf)
+    private function downMqData($dealClass, $argv, $mqConf)
     {
         while (true) {
             // 下载数据
-            $mqData = RabbitMQTool::instance($argv[2])->rMq($mqConf['deal_num']);
-            $dealObj->deal($mqData);
+            $mqData = $this->instance($argv[0])->rMq($mqConf['deal_num']);
+            $dealReflection=new \ReflectionMethod($dealClass, argv[1]);
+            $dealReflection->invoke($mqData);
             sleep(1);
         }
     }
