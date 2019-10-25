@@ -3,7 +3,7 @@
  * rabbitMQ配置文件
  */
 return [
-    'host' => "localhost",
+    'host' => "127.0.0.1",
     'port' => 5672,
     'user' => 'webherobo',
     'pwd' => 'admin123',
