@@ -46,6 +46,7 @@ class RabbitMqService extends Service
     {
         // 获取rabbitmq所有配置
         $rabbitMqConf = config('rabbit_mq');
+        $this->mqConf = $rabbitMqConf;
         if (!isset($rabbitMqConf['rabbit_mq_queue'])) {
             die('没有定义rabbit_mq');
         }
@@ -63,19 +64,17 @@ class RabbitMqService extends Service
         if (empty($mqdata)) {
             $mqConf = config('rabbit_mq')["rabbit_mq_queue"]["test"];
         }
-        // 获取具体mq信息
-        $this->mqConf = $mqConf;
-            //建立生产者与mq之间的连接
+        //建立生产者与mq之间的连接
         $this->conn = new AMQPStreamConnection(
             $this->mqConf['host'], $this->mqConf['port'], $this->mqConf['user'], $this->mqConf['pwd'], $this->mqConf['vhost']
         );
         $this->channel = $this->conn->channel();
         // 声明初始化交换机
-        $this->channel->exchange_declare($this->mqConf['exchange_name'], 'direct', false, true, false);
+        $this->channel->exchange_declare($mqConf['exchange_name'], 'direct', false, true, false);
         // 声明初始化一条队列
-        $this->channel->queue_declare($this->mqConf['queue_name'], false, true, false, false);
+        $this->channel->queue_declare($mqConf['queue_name'], false, true, false, false);
         // 交换机队列绑定
-        $this->channel->queue_bind($this->mqConf['queue_name'], $this->mqConf['exchange_name']);
+        $this->channel->queue_bind($mqConf['queue_name'], $mqConf['exchange_name']);
         return $this;
     }
 
