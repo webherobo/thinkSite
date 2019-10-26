@@ -94,7 +94,7 @@ class Hello
             }
 
         } catch (\Exception $e) {
-            fwrite($fp, $$e->getMessage() . "\n");
+            fwrite($fp, $e->getMessage() . "\n");
         }
 
     }
