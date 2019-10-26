@@ -46,11 +46,22 @@ class RabbitMqService extends Service
     {
         // 获取rabbitmq所有配置
         $rabbitMqConf = config('rabbit_mq');
-        $this->mqConf = $rabbitMqConf;
+
+        $this->setmqConf($rabbitMqConf);
         if (!isset($rabbitMqConf['rabbit_mq_queue'])) {
             die('没有定义rabbit_mq');
         }
 
+    }
+
+    public function setmqConf($mqConf)
+    {
+        $this->mqConf = $mqConf;
+    }
+
+    public function getmqConf()
+    {
+        return $this->mqConf;
     }
 
     /**
@@ -64,10 +75,10 @@ class RabbitMqService extends Service
         if (empty($mqdata)) {
             $mqConf = config('rabbit_mq')["rabbit_mq_queue"]["test"];
         }
-        $this->mqConf = config('rabbit_mq');
+        $mqCon = $this->getmqConf();
         //建立生产者与mq之间的连接
         $this->conn = new AMQPStreamConnection(
-            $this->mqConf['host'], $this->mqConf['port'], $this->mqConf['user'], $this->mqConf['pwd'], $this->mqConf['vhost']
+            $mqCon['host'], $mqCon['port'], $mqCon['user'], $mqCon['pwd'], $mqCon['vhost']
         );
         $this->channel = $this->conn->channel();
         // 声明初始化交换机
@@ -139,7 +150,7 @@ class RabbitMqService extends Service
         $argv[0] ?? $argv[0] = 'test';
         $argv[1] ?? $argv[1] = 'fire';
         $argv[2] ?? $argv[2] = '-d';
-        $argv[3] ?? $argv[3]=1;
+        $argv[3] ?? $argv[3] = 1;
         // 脚本路径
         $this->dealPath = str_replace('/', '\\', "/app/job/");
         // 扩展参数
@@ -165,16 +176,16 @@ class RabbitMqService extends Service
         }
         // 获取mq配置
         $mqConf = $rabbitMqConf['rabbit_mq_queue'][$argv[0]];
-        if(!empty($this->dealPath)){
+        if (!empty($this->dealPath)) {
             // 实例化处理脚本
             $dealClass = $this->dealPath . $mqConf['consumer'];
-        }else{
-            $dealClass=$mqConf['consumer'];
+        } else {
+            $dealClass = $mqConf['consumer'];
 //            $dealReflection = new \ReflectionClass($dealClass);  // 将类名consumer作为参数，即可建立consumer类的反射类
 //            $dealObj = $dealReflection->newInstance();
 //            $getconfig = $dealReflection->getMethod('config')->setAccessible(true);
-            $dealReflection=new \ReflectionMethod($dealClass, 'config');
-            $mqConf=$dealReflection->setAccessible(true)->invoke();
+            $dealReflection = new \ReflectionMethod($dealClass, 'config');
+            $mqConf = $dealReflection->setAccessible(true)->invoke();
         }
 
         $processNum = $argv[3];
@@ -214,7 +225,7 @@ class RabbitMqService extends Service
         while (true) {
             // 下载数据
             $mqData = $this->instance($argv[0])->rMq($mqConf['deal_num']);
-            $dealReflection=new \ReflectionMethod($dealClass, argv[1]);
+            $dealReflection = new \ReflectionMethod($dealClass, argv[1]);
             $dealReflection->invoke($mqData);
             sleep(1);
         }
