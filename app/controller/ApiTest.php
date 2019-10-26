@@ -186,7 +186,7 @@ class ApiTest extends ApiBase
         $this->app->rabbitMqService->instance($mqConf);
         $data = ["name" => "webherobo"];
         $this->app->rabbitMqService->wMq($data);
-        fwrite($fp, '数据入队.');
+        fwrite($fp, "数据入队.\n");
         fclose($fp);
     }
     //消费者
