@@ -15,12 +15,12 @@ class RabbitMqConsumer
     public function fire($mqData)
     {
         $fp = fopen(app()->getRootPath() . "runtime/rabbitmqSuccess.log", "a+");
-        fwrite($fp, '数据出队处理完成.数据为：'.json_encode($mqData));
+        fwrite($fp, '数据出队处理完成.数据为：'.json_encode($mqData)."\n");
         fclose($fp);
     }
     public function other($mqData){
         $fp = fopen(app()->getRootPath() . "runtime/rabbitmqSuccess.log", "a+");
-        fwrite($fp, '其他任务示例数据出队处理完成.数据为：'.json_encode($mqData));
+        fwrite($fp, '其他任务示例数据出队处理完成.数据为：'.json_encode($mqData)."\n");
         fclose($fp);
     }
 }
