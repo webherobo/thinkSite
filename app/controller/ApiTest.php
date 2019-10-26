@@ -178,29 +178,5 @@ class ApiTest extends ApiBase
         }
         fclose($fp);
     }
-    //生产者
-    public function rabbitMqProducer()
-    {
-        $fp = fopen(app()->getRootPath() . "runtime/rabbitmq.log", "a+");
-        $mqConf = config('rabbit_mq')["rabbit_mq_queue"]["test"];
-        $this->app->rabbitMqService->instance($mqConf);
-        $data = ["name" => "webherobo"];
-        $this->app->rabbitMqService->wMq($data);
-        fwrite($fp, "数据入队.\n");
-        fclose($fp);
-    }
-    //消费者
-    public function RabbitMqConsumer(){
-
-        $mqConf = config('rabbit_mq')["rabbit_mq_queue"]["test"];
-        $this->app->rabbitMqService->instance($mqConf);
-        //队列别名 ,进程数 ,-d(守护进程) | -s (杀死进程)
-        $argv=['test','fire'];
-        $this->app->rabbitMqService->rabbitMqConsumer($argv);
-        $rabbitMqConsumer=new \ReflectionClass("app\job\RabbitMqConsumer");
-        $dealObj = $rabbitMqConsumer->newInstance();
-        $dealObj->other($argv);
-        echo "ok!";
-    }
 
 }
