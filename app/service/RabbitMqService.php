@@ -18,6 +18,8 @@ class RabbitMqService extends Service
 
     private $mqConf;
 
+    private $queueConf;
+
     /**
      * 消费者
      * @throws \Exception
@@ -57,7 +59,7 @@ class RabbitMqService extends Service
     public function instance($mqConf = [],$rabbit_mq="rabbit_mq")
     {
         if (empty($mqdata)) {
-            $mqConf = config($rabbit_mq)["rabbit_mq_queue"]["test"];
+            $queueConf = config($rabbit_mq)["rabbit_mq_queue"]["test"];
         }
         $this->mqConf = config($rabbit_mq);
         //建立生产者与mq之间的连接
@@ -66,11 +68,11 @@ class RabbitMqService extends Service
         );
         $this->channel = $this->conn->channel();
         // 声明初始化交换机
-        $this->channel->exchange_declare($mqConf['exchange_name'], 'direct', false, true, false);
+        $this->channel->exchange_declare($queueConf['exchange_name'], 'direct', false, true, false);
         // 声明初始化一条队列
-        $this->channel->queue_declare($mqConf['queue_name'], false, true, false, false);
+        $this->channel->queue_declare($queueConf['queue_name'], false, true, false, false);
         // 交换机队列绑定
-        $this->channel->queue_bind($mqConf['queue_name'], $mqConf['exchange_name']);
+        $this->channel->queue_bind($queueConf['queue_name'], $queueConf['exchange_name']);
     }
 
     /**
@@ -84,7 +86,7 @@ class RabbitMqService extends Service
         try {
             $data = json_encode($data, JSON_UNESCAPED_UNICODE);
             $msg = new AMQPMessage($data, ['content_type' => 'text/plain', 'delivery_mode' => 2]);
-            $this->channel->basic_publish($msg, $this->mqConf["rabbit_mq_queue"]['exchange_name']);
+            $this->channel->basic_publish($msg, $this->queueConf['exchange_name']);
         } catch (\Throwable $e) {
             $this->closeConn();
             return false;
@@ -107,7 +109,7 @@ class RabbitMqService extends Service
             $rData[] = json_decode($msg->body, true);
         };
         for ($i = 0; $i < $num; $i++) {
-            $this->channel->basic_consume($this->mqConf["rabbit_mq_queue"]['queue_name'], '', false, true, false, false, $callBack);
+            $this->channel->basic_consume($this->queueConf['queue_name'], '', false, true, false, false, $callBack);
         }
         $this->channel->wait();
         $this->closeConn();
