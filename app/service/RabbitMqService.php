@@ -214,7 +214,7 @@ class RabbitMqService extends Service
        // while (true) {
             // 下载数据
             $mqData = $this->rMq($mqConf['deal_num']);
-            $dealReflection=new \ReflectionMethod($dealClass, argv[1]);
+            $dealReflection=new \ReflectionMethod($dealClass, $argv[1]);
             $dealReflection->invoke($mqData);
        //     sleep(1);
       //  }
