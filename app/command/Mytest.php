@@ -22,7 +22,7 @@ class Mytest extends Command
     protected function execute(Input $input, Output $output)
     {
         // rabbitmq队列任务指令输出
-        $type=$input->hasOption('type');
+        $type=$input->getArgument('type');
         if ($type==0) {
             $mqConf = config('rabbit_mq')["rabbit_mq_queue"]["test"];
             $this->app->rabbitMqService->instance($mqConf);
