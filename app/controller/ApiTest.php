@@ -188,6 +188,7 @@ class ApiTest extends ApiBase
         $this->app->rabbitMqService->wMq($data);
         fwrite($fp, "数据入队.\n");
         fclose($fp);
+        return "ok!";
     }
 
 }
