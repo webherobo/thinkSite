@@ -144,7 +144,7 @@ class RabbitMqService extends Service
         if (isset($argv[2])) {
             switch ($argv[2]) {
                 case '-d': // 守护进程启动
-                    $this->daemonStart();
+                    //$this->daemonStart();
                     break;
                 case '-s': // 杀死进程
                     $this->killEasyExport($argv[0]);
