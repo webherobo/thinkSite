@@ -59,7 +59,9 @@ class RabbitMqService extends Service
     public function instance($mqConf = [],$rabbit_mq="rabbit_mq")
     {
         if (empty($mqdata)) {
-            $queueConf = config($rabbit_mq)["rabbit_mq_queue"]["test"];
+            $this->queueConf = config($rabbit_mq)["rabbit_mq_queue"]["test"];
+        }else{
+            $this->queueConf = $mqConf;
         }
         $this->mqConf = config($rabbit_mq);
         //建立生产者与mq之间的连接
@@ -68,11 +70,11 @@ class RabbitMqService extends Service
         );
         $this->channel = $this->conn->channel();
         // 声明初始化交换机
-        $this->channel->exchange_declare($queueConf['exchange_name'], 'direct', false, true, false);
+        $this->channel->exchange_declare($this->queueConf['exchange_name'], 'direct', false, true, false);
         // 声明初始化一条队列
-        $this->channel->queue_declare($queueConf['queue_name'], false, true, false, false);
+        $this->channel->queue_declare($this->queueConf['queue_name'], false, true, false, false);
         // 交换机队列绑定
-        $this->channel->queue_bind($queueConf['queue_name'], $queueConf['exchange_name']);
+        $this->channel->queue_bind($this->queueConf['queue_name'], $this->queueConf['exchange_name']);
     }
 
     /**
