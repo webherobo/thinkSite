@@ -15,7 +15,7 @@ class Mytest extends Command
         // 指令配置
         $this->setName('rabbitmqtest')
             ->addArgument('type', Argument::OPTIONAL, "0:消费者 1:生产者")
-            ->addOption('test', null, Option::VALUE_REQUIRED, 'city name')
+            //->addOption('test', null, Option::VALUE_REQUIRED, 'option name')
             ->setDescription('option=test name=hello argv=type');
     }
 
