@@ -197,7 +197,7 @@ class ApiTest extends ApiBase
         //队列别名 ,进程数 ,-d(守护进程) | -s (杀死进程)
         $argv=['test','fire'];
         $this->app->rabbitMqService->rabbitMqConsumer($argv);
-        $rabbitMqConsumer=new \ReflectionClass("RabbitMqConsumer");
+        $rabbitMqConsumer=new \ReflectionClass("app\job\RabbitMqConsumer");
         $rabbitMqConsumer->other($argv);
         echo "ok!";
     }
