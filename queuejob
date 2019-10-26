@@ -1,4 +1,4 @@
 #!/bin/bash
 php think queue:work  --queue  helloJobQueue
 php think queue:work  --queue multiTaskJobQueue
-php think rabbitmq --type 0
+php think rabbitmq type 0
