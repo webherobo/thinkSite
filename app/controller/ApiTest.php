@@ -183,10 +183,9 @@ class ApiTest extends ApiBase
     {
         $fp = fopen(app()->getRootPath() . "runtime/rabbitmq.log", "a+");
         $mqConf = config('rabbit_mq')["rabbit_mq_queue"]["test"];
-        $rabbitMqService = $this->app->rabbitMqService->instance($mqConf);
+        $this->app->rabbitMqService->instance($mqConf);
         $data = ["name" => "webherobo"];
-        $rabbitMqService->wMq($data);
-
+        $this->app->rabbitMqService->wMq($data);
         fwrite($fp, '数据入队.');
         fclose($fp);
     }
@@ -194,10 +193,10 @@ class ApiTest extends ApiBase
     public function RabbitMqConsumer(){
 
         $mqConf = config('rabbit_mq')["rabbit_mq_queue"]["test"];
-        $rabbitMqService = $this->app->rabbitMqService->instance($mqConf);
+        $this->app->rabbitMqService->instance($mqConf);
         //队列别名 ,进程数 ,-d(守护进程) | -s (杀死进程)
         $argv=['test','fire'];
-        $rabbitMqService->rabbitMqConsumer($argv);
+        $this->app->rabbitMqService->rabbitMqConsumer($argv);
         $rabbitMqConsumer=new \ReflectionClass("RabbitMqConsumer");
         $rabbitMqConsumer->other($argv);
         echo "ok!";
