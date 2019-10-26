@@ -32,7 +32,7 @@ class Mytest extends Command
             $rabbitMqConsumer = new \ReflectionClass("app\job\RabbitMqConsumer");
             $dealObj = $rabbitMqConsumer->newInstance();
             $dealObj->other($argv);
-            echo "ok!";
+            $output->writeln("rabbitMqProducer,参数" . $type . '!' );
         } else {
             //生产者
             $fp = fopen(app()->getRootPath() . "runtime/rabbitmq.log", "a+");
@@ -42,7 +42,7 @@ class Mytest extends Command
             $this->app->rabbitMqService->wMq($data);
             fwrite($fp, "数据入队.\n");
             fclose($fp);
-            echo "ok!";
+            $output->writeln("rabbitMqConsumer,参数" . $type . '!');
 
         }
 
