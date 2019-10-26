@@ -198,7 +198,8 @@ class ApiTest extends ApiBase
         $argv=['test','fire'];
         $this->app->rabbitMqService->rabbitMqConsumer($argv);
         $rabbitMqConsumer=new \ReflectionClass("app\job\RabbitMqConsumer");
-        $rabbitMqConsumer->other($argv);
+        $dealObj = $rabbitMqConsumer->newInstance();
+        $dealObj->other($argv);
         echo "ok!";
     }
 
