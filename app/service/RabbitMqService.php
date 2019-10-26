@@ -84,7 +84,7 @@ class RabbitMqService extends Service
         try {
             $data = json_encode($data, JSON_UNESCAPED_UNICODE);
             $msg = new AMQPMessage($data, ['content_type' => 'text/plain', 'delivery_mode' => 2]);
-            $this->channel->basic_publish($msg, $this->mqConf['exchange_name']);
+            $this->channel->basic_publish($msg, $this->mqConf["rabbit_mq_queue"]['exchange_name']);
         } catch (\Throwable $e) {
             $this->closeConn();
             return false;
@@ -107,7 +107,7 @@ class RabbitMqService extends Service
             $rData[] = json_decode($msg->body, true);
         };
         for ($i = 0; $i < $num; $i++) {
-            $this->channel->basic_consume($this->mqConf['queue_name'], '', false, true, false, false, $callBack);
+            $this->channel->basic_consume($this->mqConf["rabbit_mq_queue"]['queue_name'], '', false, true, false, false, $callBack);
         }
         $this->channel->wait();
         $this->closeConn();
@@ -153,7 +153,7 @@ class RabbitMqService extends Service
             die('缺少参数');
         }
         // 获取配置信息
-        $rabbitMqConf = config('rabbit_mq');
+        $rabbitMqConf = $this->mqConf;
         if (!isset($rabbitMqConf['rabbit_mq_queue'][$argv[0]])) {
             die('没有配置:' . $argv[0]);
         }
