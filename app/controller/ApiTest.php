@@ -178,5 +178,16 @@ class ApiTest extends ApiBase
         }
         fclose($fp);
     }
+    //生产者
+    public function rabbitMqProducer()
+    {
+        $fp = fopen(app()->getRootPath() . "runtime/rabbitmq.log", "a+");
+        $mqConf = config('rabbit_mq')["rabbit_mq_queue"]["test"];
+        $this->app->rabbitMqService->instance($mqConf);
+        $data = ["name" => "webherobo"];
+        $this->app->rabbitMqService->wMq($data);
+        fwrite($fp, "数据入队.\n");
+        fclose($fp);
+    }
 
 }
