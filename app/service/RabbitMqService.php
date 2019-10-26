@@ -182,21 +182,23 @@ class RabbitMqService extends Service
         if (!isset($mqConf['deal_num']) || !is_numeric($mqConf['deal_num'])) {
             die('处理条数设置有误');
         }
-        // fork进程
-        for ($i = 0; $i < $processNum; $i++) {
-            $pid = pcntl_fork();
-            if ($pid < 0) {
-                exit();
-            } else if (0 == $pid) {
-                $this->downMqData($dealClass, $argv, $mqConf);
-                exit();
-            } else if ($pid > 0) {
-                $this->childsPid[] = $pid;
-            }
-        }
-        while (true) {
-            sleep(1);
-        }
+        $this->downMqData($dealClass, $argv, $mqConf);
+
+//        // fork进程
+//        for ($i = 0; $i < $processNum; $i++) {
+//            $pid = pcntl_fork();
+//            if ($pid < 0) {
+//                exit();
+//            } else if (0 == $pid) {
+//                $this->downMqData($dealClass, $argv, $mqConf);
+//                exit();
+//            } else if ($pid > 0) {
+//                $this->childsPid[] = $pid;
+//            }
+//        }
+//        while (true) {
+//            sleep(1);
+//        }
     }
 
     /**
@@ -209,13 +211,13 @@ class RabbitMqService extends Service
      */
     private function downMqData($dealClass, $argv, $mqConf)
     {
-        while (true) {
+       // while (true) {
             // 下载数据
             $mqData = $this->rMq($mqConf['deal_num']);
             $dealReflection=new \ReflectionMethod($dealClass, argv[1]);
             $dealReflection->invoke($mqData);
-            sleep(1);
-        }
+       //     sleep(1);
+      //  }
     }
 
     private function killEasyExport($startFile)
