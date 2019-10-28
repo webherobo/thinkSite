@@ -365,7 +365,7 @@ class swooleServer extends Command
 
             // 先验证
 
-            $have_fd = $redis->hExists($out_key, $fd);
+            $have_fd = $redis->hExists($out_key, strval($fd));
 
             if ($have_fd) {
 
