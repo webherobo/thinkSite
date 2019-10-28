@@ -549,7 +549,7 @@ class swooleServer extends Command
             $redis->auth($this->redis_pwd);
 
         }
-
+        echo "值:".var_dump($this->all_fd_token_map)."@@@".var_dump($fd)."\n";
         $have_map = $redis->hExists($this->all_fd_token_map, $fd);
 
         echo "2 {$fd}是否有map?:\n";
