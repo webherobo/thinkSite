@@ -40,7 +40,7 @@ class swooleServer extends Command
     private $redis_server = "127.0.0.1";
 
 
-    private $redis_port = "6379";
+    private $redis_port = 6379;
 
 
     private $redis_pwd = "";
@@ -67,9 +67,9 @@ class swooleServer extends Command
 
         //redie 配置
 
-        $this->redis_server = "127.0.0.1";
+        $this->redis_server = '127.0.0.1';
 
-        $this->redis_port =  "6379";
+        $this->redis_port =  6379;
 
         $this->redis_pwd =  "";
 
