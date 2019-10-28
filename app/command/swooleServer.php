@@ -67,11 +67,11 @@ class swooleServer extends Command
 
         //redie 配置
 
-        $this->redis_server = !empty(config("PUBLIC_REDIS_ADDR")) ? config("PUBLIC_REDIS_ADDR") : "127.0.0.1";
+        $this->redis_server = "127.0.0.1";
 
-        $this->redis_port = !empty(config("PUBLIC_REDIS_PORT")) ? config("PUBLIC_REDIS_PORT") : "6379";
+        $this->redis_port =  "6379";
 
-        $this->redis_pwd = !empty(config("PUBLIC_REDIS_PWD")) ? config("PUBLIC_REDIS_PWD") : "";
+        $this->redis_pwd =  "";
 
         $this->clean_all_tunnel_key();
 
