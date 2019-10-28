@@ -78,6 +78,8 @@ class swooleServer extends Command
 
     protected function execute(Input $input, Output $output)
     {
+        // 指令输出
+        $output->writeln('swooleServer runing');
         //swoole
         if (!defined('GLOBAL_START')) {
 
@@ -108,7 +110,7 @@ class swooleServer extends Command
 
             $this->serv->on('Receive', array($this, 'onReceive'));
 
-            $this->serv->on('Request', array($this, 'onRequest'));
+            $this->serv->on('Message', array($this, 'onMessage'));
 
             $this->serv->on('Close', array($this, 'onClose'));
 
@@ -123,8 +125,7 @@ class swooleServer extends Command
             define('GLOBAL_START', true);
 
         }
-        // 指令输出
-        $output->writeln('swooleServer runing');
+
     }
 
     public function onStart($serv)
@@ -154,7 +155,7 @@ class swooleServer extends Command
 
     }
 
-    public function onRequest($request, $response)
+    public function onMessage($request, $response)
     {
         $response->header("Server", "SwooleServer");
         $response->header("Content-Type", "text/html; charset=utf-8");
