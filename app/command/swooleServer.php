@@ -9,7 +9,7 @@ use think\console\input\Argument;
 use think\console\input\Option;
 use think\console\Output;
 
-class appcommandswooleServer extends Command
+class swooleServer extends Command
 {
     protected function configure()
     {
