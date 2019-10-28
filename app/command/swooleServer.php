@@ -73,7 +73,7 @@ class swooleServer extends Command
 
         $this->redis_pwd =  "";
 
-        $this->clean_all_tunnel_key();
+        //$this->clean_all_tunnel_key();
 
         //swoole
         if (!defined('GLOBAL_START')) {
