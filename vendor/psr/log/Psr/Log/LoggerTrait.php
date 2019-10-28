@@ -102,7 +102,7 @@ trait LoggerTrait
     /**
      * Interesting events.
      *
-     * Example: UserValidate logs in, SQL logs.
+     * Example: User logs in, SQL logs.
      *
      * @param string $message
      * @param array  $context
@@ -135,6 +135,8 @@ trait LoggerTrait
      * @param array  $context
      *
      * @return void
+     *
+     * @throws \Psr\Log\InvalidArgumentException
      */
     abstract public function log($level, $message, array $context = array());
 }

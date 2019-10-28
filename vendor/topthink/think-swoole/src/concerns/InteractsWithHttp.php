@@ -32,20 +32,19 @@ trait InteractsWithHttp
     public function onRequest($req, $res)
     {
         $args = func_get_args();
-        $this->runInSandbox(function (Http $http, Cookie $cookie, Event $event) use ($args, $req, $res) {
+        $this->runInSandbox(function (Http $http, Event $event, App $app) use ($args, $req, $res) {
             $event->trigger('swoole.request', $args);
 
             $request = $this->prepareRequest($req);
             try {
                 $response = $this->handleRequest($http, $request);
-                $this->sendResponse($res, $response, $cookie);
             } catch (Throwable $e) {
                 $response = $this->app
                     ->make(Handle::class)
                     ->render($request, $e);
-
-                $this->sendResponse($res, $response, $cookie);
             }
+
+            $this->sendResponse($res, $response, $app->cookie);
         });
     }
 

@@ -10,26 +10,12 @@ trait InteractsWithPoolConnector
 
     protected $pool;
 
-    protected $return = true;
+    protected $release = true;
 
-    public function __construct($handler, Channel $pool, $return = true)
+    public function __construct($handler, Channel $pool)
     {
         $this->handler = $handler;
         $this->pool    = $pool;
-        $this->return  = $return;
-    }
-
-    public function returnToPool(): bool
-    {
-        if (!$this->return) {
-            return true;
-        }
-
-        if ($this->pool->isFull()) {
-            return false;
-        }
-
-        return $this->pool->push($this->handler, 0.001);
     }
 
     public function __call($method, $arguments)
@@ -37,8 +23,20 @@ trait InteractsWithPoolConnector
         return $this->handler->{$method}(...$arguments);
     }
 
+    public function release()
+    {
+        if (!$this->release) {
+            return;
+        }
+        $this->release = false;
+
+        if (!$this->pool->isFull()) {
+            $this->pool->push($this->handler, 0.001);
+        }
+    }
+
     public function __destruct()
     {
-        $this->returnToPool();
+        $this->release();
     }
 }

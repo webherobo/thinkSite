@@ -1333,17 +1333,17 @@
     },
     {
         "name": "nette/utils",
-        "version": "v3.0.1",
-        "version_normalized": "3.0.1.0",
+        "version": "v3.0.2",
+        "version_normalized": "3.0.2.0",
         "source": {
             "type": "git",
             "url": "https://github.com/nette/utils.git",
-            "reference": "bd961f49b211997202bda1d0fbc410905be370d4"
+            "reference": "c133e18c922dcf3ad07673077d92d92cef25a148"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/nette/utils/zipball/bd961f49b211997202bda1d0fbc410905be370d4",
-            "reference": "bd961f49b211997202bda1d0fbc410905be370d4",
+            "url": "https://api.github.com/repos/nette/utils/zipball/c133e18c922dcf3ad07673077d92d92cef25a148",
+            "reference": "c133e18c922dcf3ad07673077d92d92cef25a148",
             "shasum": ""
         },
         "require": {
@@ -1359,9 +1359,10 @@
             "ext-intl": "to use Strings::webalize(), toAscii(), normalize() and compare()",
             "ext-json": "to use Nette\\Utils\\Json",
             "ext-mbstring": "to use Strings::lower() etc...",
+            "ext-tokenizer": "to use Nette\\Utils\\Reflection::getUseStatements()",
             "ext-xml": "to use Strings::length() etc. when mbstring is not available"
         },
-        "time": "2019-03-22T01:00:30+00:00",
+        "time": "2019-10-21T20:40:16+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -1950,27 +1951,27 @@
     },
     {
         "name": "psr/log",
-        "version": "1.1.0",
-        "version_normalized": "1.1.0.0",
+        "version": "1.1.1",
+        "version_normalized": "1.1.1.0",
         "source": {
             "type": "git",
             "url": "https://github.com/php-fig/log.git",
-            "reference": "6c001f1daafa3a3ac1d8ff69ee4db8e799a654dd"
+            "reference": "bf73deb2b3b896a9d9c75f3f0d88185d2faa27e2"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/php-fig/log/zipball/6c001f1daafa3a3ac1d8ff69ee4db8e799a654dd",
-            "reference": "6c001f1daafa3a3ac1d8ff69ee4db8e799a654dd",
+            "url": "https://api.github.com/repos/php-fig/log/zipball/bf73deb2b3b896a9d9c75f3f0d88185d2faa27e2",
+            "reference": "bf73deb2b3b896a9d9c75f3f0d88185d2faa27e2",
             "shasum": ""
         },
         "require": {
             "php": ">=5.3.0"
         },
-        "time": "2018-11-20T15:27:04+00:00",
+        "time": "2019-10-25T08:06:51+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
-                "dev-master": "1.0.x-dev"
+                "dev-master": "1.1.x-dev"
             }
         },
         "installation-source": "dist",
@@ -2721,12 +2722,12 @@
         "source": {
             "type": "git",
             "url": "https://github.com/top-think/framework.git",
-            "reference": "65d4c81e0f822461d9fa32d58949aa46a0973d3b"
+            "reference": "0c67b3e7544a49f2a1ae9263efa00d7779462673"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/top-think/framework/zipball/65d4c81e0f822461d9fa32d58949aa46a0973d3b",
-            "reference": "65d4c81e0f822461d9fa32d58949aa46a0973d3b",
+            "url": "https://api.github.com/repos/top-think/framework/zipball/0c67b3e7544a49f2a1ae9263efa00d7779462673",
+            "reference": "0c67b3e7544a49f2a1ae9263efa00d7779462673",
             "shasum": ""
         },
         "require": {
@@ -2747,7 +2748,7 @@
             "mockery/mockery": "^1.2",
             "phpunit/phpunit": "^7.0"
         },
-        "time": "2019-10-20T03:25:18+00:00",
+        "time": "2019-10-25T11:10:21+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -2967,12 +2968,12 @@
         "source": {
             "type": "git",
             "url": "https://github.com/top-think/think-orm.git",
-            "reference": "1752dfab0dabdda06b1ce49ceb16374875541726"
+            "reference": "aac60421e1a8ac81aea6251e971250fb1aed683c"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/top-think/think-orm/zipball/1752dfab0dabdda06b1ce49ceb16374875541726",
-            "reference": "1752dfab0dabdda06b1ce49ceb16374875541726",
+            "url": "https://api.github.com/repos/top-think/think-orm/zipball/aac60421e1a8ac81aea6251e971250fb1aed683c",
+            "reference": "aac60421e1a8ac81aea6251e971250fb1aed683c",
             "shasum": ""
         },
         "require": {
@@ -2982,7 +2983,7 @@
             "psr/simple-cache": "^1.0",
             "topthink/think-helper": "^3.1"
         },
-        "time": "2019-10-18T14:43:21+00:00",
+        "time": "2019-10-25T13:33:48+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -3009,17 +3010,17 @@
     },
     {
         "name": "topthink/think-queue",
-        "version": "v3.0.3",
-        "version_normalized": "3.0.3.0",
+        "version": "v3.0.4",
+        "version_normalized": "3.0.4.0",
         "source": {
             "type": "git",
             "url": "https://github.com/top-think/think-queue.git",
-            "reference": "f92db88b8a4ad3a4a2a53f21c0f370237181f44b"
+            "reference": "a993295b68a483dc3cb2c0fee05683908fa2572e"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/top-think/think-queue/zipball/f92db88b8a4ad3a4a2a53f21c0f370237181f44b",
-            "reference": "f92db88b8a4ad3a4a2a53f21c0f370237181f44b",
+            "url": "https://api.github.com/repos/top-think/think-queue/zipball/a993295b68a483dc3cb2c0fee05683908fa2572e",
+            "reference": "a993295b68a483dc3cb2c0fee05683908fa2572e",
             "shasum": ""
         },
         "require": {
@@ -3035,7 +3036,7 @@
             "phpunit/phpunit": "^6.2",
             "topthink/think-migration": "^3.0.0"
         },
-        "time": "2019-09-03T03:35:38+00:00",
+        "time": "2019-10-13T03:51:32+00:00",
         "type": "library",
         "extra": {
             "think": {
@@ -3070,17 +3071,17 @@
     },
     {
         "name": "topthink/think-swoole",
-        "version": "v3.0.4",
-        "version_normalized": "3.0.4.0",
+        "version": "v3.0.5",
+        "version_normalized": "3.0.5.0",
         "source": {
             "type": "git",
             "url": "https://github.com/top-think/think-swoole.git",
-            "reference": "1440f7782d11ced3690b7523814b2c422f8fab14"
+            "reference": "e36eff2f2bd88b5fe30631f55aa6b1c27b89aefa"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/top-think/think-swoole/zipball/1440f7782d11ced3690b7523814b2c422f8fab14",
-            "reference": "1440f7782d11ced3690b7523814b2c422f8fab14",
+            "url": "https://api.github.com/repos/top-think/think-swoole/zipball/e36eff2f2bd88b5fe30631f55aa6b1c27b89aefa",
+            "reference": "e36eff2f2bd88b5fe30631f55aa6b1c27b89aefa",
             "shasum": ""
         },
         "require": {
@@ -3095,7 +3096,7 @@
         "require-dev": {
             "symfony/var-dumper": "^4.3"
         },
-        "time": "2019-10-13T11:27:05+00:00",
+        "time": "2019-10-21T12:03:07+00:00",
         "type": "library",
         "extra": {
             "think": {
@@ -3130,24 +3131,24 @@
     },
     {
         "name": "topthink/think-template",
-        "version": "v2.0.6",
-        "version_normalized": "2.0.6.0",
+        "version": "v2.0.7",
+        "version_normalized": "2.0.7.0",
         "source": {
             "type": "git",
             "url": "https://github.com/top-think/think-template.git",
-            "reference": "1db0078db13397e7271826f895f8d17279ad9e1e"
+            "reference": "e98bdbb4a4c94b442f17dfceba81e0134d4fbd19"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/top-think/think-template/zipball/1db0078db13397e7271826f895f8d17279ad9e1e",
-            "reference": "1db0078db13397e7271826f895f8d17279ad9e1e",
+            "url": "https://api.github.com/repos/top-think/think-template/zipball/e98bdbb4a4c94b442f17dfceba81e0134d4fbd19",
+            "reference": "e98bdbb4a4c94b442f17dfceba81e0134d4fbd19",
             "shasum": ""
         },
         "require": {
             "php": ">=7.1.0",
             "psr/simple-cache": "^1.0"
         },
-        "time": "2019-09-04T13:43:03+00:00",
+        "time": "2019-09-20T15:31:04+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {

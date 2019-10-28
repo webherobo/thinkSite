@@ -8,7 +8,9 @@ use Nette\PhpGenerator\PhpFile;
 use ReflectionClass;
 use RuntimeException;
 use think\swoole\contract\rpc\ParserInterface;
+use think\swoole\exception\RpcResponseException;
 use think\swoole\rpc\Error;
+use think\swoole\rpc\JsonParser;
 use think\swoole\rpc\Protocol;
 
 class Proxy
@@ -16,13 +18,18 @@ class Proxy
     protected $client;
     protected $interface;
 
+    /** @var Pool */
     protected $pool;
+
+    /** @var ParserInterface */
     protected $parser;
 
-    public function __construct(Pool $pool, ParserInterface $parser)
+    public function __construct(Pool $pool)
     {
-        $this->pool   = $pool;
-        $this->parser = $parser;
+        $this->pool = $pool;
+
+        $parserClass  = $this->pool->getClientConfig($this->client, 'parser', JsonParser::class);
+        $this->parser = new $parserClass;
     }
 
     protected function proxyCall($method, $params)
@@ -30,36 +37,19 @@ class Proxy
         $protocol = Protocol::make($this->interface, $method, $params);
         $data     = $this->parser->encode($protocol);
 
-        $client = $this->pool->client($this->client);
+        $client = $this->pool->connect($this->client);
 
-        $client->send($data);
+        $response = $client->sendAndRecv($data);
 
-        $response = $client->recv();
-
-        $client->returnToPool();
+        $client->release();
 
         $result = $this->parser->decodeResponse($response);
 
         if ($result instanceof Error) {
-            $code      = $result->getCode();
-            $message   = $result->getMessage();
-            $errorData = $result->getData();
-
-            throw new \Exception(
-                sprintf(
-                    'Rpc call error!code=%d message=%s data=%s',
-                    $code, $message, json_encode($errorData)
-                ),
-                $code
-            );
+            throw new RpcResponseException($result);
         }
 
         return $result;
-    }
-
-    public function __destruct()
-    {
-        // TODO: Implement __destruct() method.
     }
 
     public static function getClassName($interface)

@@ -91,7 +91,7 @@ interface LoggerInterface
     /**
      * Interesting events.
      *
-     * Example: UserValidate logs in, SQL logs.
+     * Example: User logs in, SQL logs.
      *
      * @param string $message
      * @param array  $context
@@ -118,6 +118,8 @@ interface LoggerInterface
      * @param array  $context
      *
      * @return void
+     *
+     * @throws \Psr\Log\InvalidArgumentException
      */
     public function log($level, $message, array $context = array());
 }

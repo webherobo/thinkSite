@@ -10,36 +10,25 @@
 // +----------------------------------------------------------------------
 declare (strict_types = 1);
 
-namespace think\middleware;
+namespace think\response;
 
-use Closure;
-use think\exception\ValidateException;
-use think\Request;
+use think\Cookie;
 use think\Response;
 
 /**
- * 表单令牌支持
+ * Html Response
  */
-class FormTokenCheck
+class Html extends Response
 {
-
     /**
-     * 表单令牌检测
-     * @access public
-     * @param Request $request
-     * @param Closure $next
-     * @param string  $token 表单令牌Token名称
-     * @return Response
+     * 输出type
+     * @var string
      */
-    public function handle(Request $request, Closure $next, string $token = null)
+    protected $contentType = 'text/html';
+
+    public function __construct(Cookie $cookie, $data = '', int $code = 200)
     {
-        $check = $request->checkToken($token ?: '__token__');
-
-        if (false === $check) {
-            throw new ValidateException('invalid token');
-        }
-
-        return $next($request);
+        $this->init($data, $code);
+        $this->cookie = $cookie;
     }
-
 }
