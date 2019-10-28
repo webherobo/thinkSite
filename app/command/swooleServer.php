@@ -448,7 +448,7 @@ class swooleServer extends Command
         $msg = $this->send_msg($fd, $backbool);
         // 这里作为回复客户端
 
-        return "fd: {$fd} Task {$task_id}'s 结果{$msg}";
+        return "fd: {$fd} Task {$task_id}'s 结果{$msg}\n";
 
     }
 
