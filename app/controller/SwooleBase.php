@@ -29,7 +29,7 @@ class SwooleBase extends BaseController
             die("connect failed.");
         }
         $data=['token'=>"webherobo1".time(),'platform'=>"app",'data'=>'hello world'];
-        $senddata=json_encode($data);
+        $senddata=json_encode(['code'=>0,'message'=>"ok",'data'=>$data]);
         //向服务器发送数据
         if (!$client->send($senddata)) {
             echo ‘发送失败‘;
