@@ -675,7 +675,8 @@ class swooleServer extends Command
             $this->resumeCos();
             // 通知其它worker进程
             for ($i = 1; $i < $server->setting['worker_num']; ++$i) {
-                $server->sendMessage('init', $i);
+                echo '通知恢复协程',PHP_EOL;
+               // $server->sendMessage('init', $i);
             }
         }
     }
