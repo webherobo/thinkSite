@@ -571,6 +571,7 @@ class swooleServer extends Command
 
         $redis->close();
         $serv->exists($fd);
+        return true;
 
     }
 
