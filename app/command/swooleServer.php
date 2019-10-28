@@ -74,7 +74,10 @@ class swooleServer extends Command
         $this->redis_pwd =  "";
 
         //$this->clean_all_tunnel_key();
+    }
 
+    protected function execute(Input $input, Output $output)
+    {
         //swoole
         if (!defined('GLOBAL_START')) {
 
@@ -120,10 +123,6 @@ class swooleServer extends Command
             define('GLOBAL_START', true);
 
         }
-    }
-
-    protected function execute(Input $input, Output $output)
-    {
         // 指令输出
         $output->writeln('swooleServer runing');
     }
