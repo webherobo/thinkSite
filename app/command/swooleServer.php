@@ -342,7 +342,7 @@ class swooleServer extends Command
 
         if (empty($check_bool)) {
 
-            $backbool = "false";
+            $backbool = "false\n";
 
             $re_mag = $this->send_msg($fd, $backbool);
             // 这里作为回复客户端
