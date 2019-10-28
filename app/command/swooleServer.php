@@ -304,7 +304,7 @@ class swooleServer extends Command
         $fd = json_decode($in_data, true)['fd'];
 
         $cdata = json_decode($in_data, true)['data'];
-        echo json_encode($cdata["message"]);
+        echo $cdata["message"];
         $data = $cdata["data"];
         if (!isset($data["token"]) || !isset($data["platform"])) {
 
