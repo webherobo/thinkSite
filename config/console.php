@@ -7,5 +7,6 @@ return [
     'commands' => [
         'hello' => 'app\command\Hello',
         'rabbitmq' => 'app\command\Mytest',
+        'swooleServer' => 'app\command\swooleServer',
     ],
 ];
