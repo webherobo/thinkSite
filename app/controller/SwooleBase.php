@@ -29,7 +29,7 @@ class SwooleBase extends BaseController
     use InteractsWithWebsocket;
 
 
-    protected $port = 9052;
+    protected $port = 8081;//9052;
 
 
     private $serv;
@@ -73,49 +73,46 @@ class SwooleBase extends BaseController
         $this->clean_all_tunnel_key();
 
         //swoole
-
-        $this->serv = new \swoole_server("0.0.0.0", $this->port);
-
-        $this->serv->set(array(
-
-            'worker_num' => 8,//建议开启的worker进程数为cpu核数的1-4倍
-
-            'daemonize' => false,
-
-            'max_request' => 10000,
-
-            'dispatch_mode' => 2,
-
-            'debug_mode' => 1,
-
-            'task_worker_num' => 8
-
-        ));
-
-        //'reactor_num' => 8 //，默认会启用CPU核数相同的数量， 一般设置为CPU核数的1-4倍，最大不得超过CPU核数*4。
-        $this->serv->on('WorkerStart', array($this, 'onWorkerStart'));
-
-        $this->serv->on('Start', array($this, 'onStart'));
-
-        $this->serv->on('Connect', array($this, 'onConnect'));
-
-        $this->serv->on('Receive', array($this, 'onReceive'));
-
-        $this->serv->on('Request', array($this, 'onRequest'));
-
-        $this->serv->on('Close', array($this, 'onClose'));
-
-        $this->serv->on('Task', array($this, 'onTask'));
-
-        // bind callback
-
-        $this->serv->on('Finish', array($this, 'onFinish'));
-
-        $this->serv->start();
-
         if (!defined('GLOBAL_START')) {
 
-            $server = new Server();
+            $this->serv = new \swoole_server("0.0.0.0", $this->port);
+
+            $this->serv->set(array(
+
+                'worker_num' => 8,//建议开启的worker进程数为cpu核数的1-4倍
+
+                'daemonize' => false,
+
+                'max_request' => 10000,
+
+                'dispatch_mode' => 2,
+
+                'debug_mode' => 1,
+
+                'task_worker_num' => 8
+
+            ));
+
+            //'reactor_num' => 8 //，默认会启用CPU核数相同的数量， 一般设置为CPU核数的1-4倍，最大不得超过CPU核数*4。
+            $this->serv->on('WorkerStart', array($this, 'onWorkerStart'));
+
+            $this->serv->on('Start', array($this, 'onStart'));
+
+            $this->serv->on('Connect', array($this, 'onConnect'));
+
+            $this->serv->on('Receive', array($this, 'onReceive'));
+
+            $this->serv->on('Request', array($this, 'onRequest'));
+
+            $this->serv->on('Close', array($this, 'onClose'));
+
+            $this->serv->on('Task', array($this, 'onTask'));
+
+            // bind callback
+
+            $this->serv->on('Finish', array($this, 'onFinish'));
+
+            $this->serv->start();
 
             define('GLOBAL_START', true);
 
@@ -587,9 +584,9 @@ class SwooleBase extends BaseController
     private function set_config()
     {
 
-        $m = Db::connect($this->db_config)->table('wt_config');
+        // $m = Db::connect($this->db_config)->table('wt_config');
 
-        $r = $m->select();
+        $r = [];//$m->select();
 
         foreach ($r as $k => $v) {
 
