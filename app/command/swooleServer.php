@@ -550,7 +550,7 @@ class swooleServer extends Command
 
         }
         echo "值:".var_dump($this->all_fd_token_map)."@@@".var_dump($fd)."\n";
-        $have_map = $redis->hExists($this->all_fd_token_map, $fd);
+        $have_map = $redis->hExists($this->all_fd_token_map, strval($fd));
 
         echo "2 {$fd}是否有map?:\n";
 
