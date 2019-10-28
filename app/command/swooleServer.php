@@ -668,11 +668,11 @@ class swooleServer extends Command
         $initFlagFile = __DIR__ . '/init.flag';
         if (0 === $server->worker_id && (!is_file($initFlagFile) || file_get_contents($initFlagFile) != $server->manager_pid)) {
             // 处理项目初始化事件
-            initApp();
+            $this->initApp();
             // 写入文件，保证不再重复触发项目初始化事件
             file_put_contents($initFlagFile, $server->manager_pid);
             // 当前worker进程恢复协程
-            resumeCos();
+            $this->resumeCos();
             // 通知其它worker进程
             for ($i = 1; $i < $server->setting['worker_num']; ++$i) {
                 $server->sendMessage('init', $i);
@@ -684,7 +684,7 @@ class swooleServer extends Command
     {
         if (0 === $workerId && 'init' === $data && !defined('APP_INITED')) {
             // 其它worker进程恢复协程
-            resumeCos();
+            $this->resumeCos();
         }
     }
 
