@@ -571,7 +571,7 @@ class swooleServer extends Command
         }
 
         $redis->close();
-        $serv->send("beybey");
+        $serv->send($fd,"beybey");
         $serv->exists($fd);
         $serv->close($fd);
 
