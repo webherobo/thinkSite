@@ -28,8 +28,10 @@ class SwooleBase extends BaseController
         if (!$client->connect('127.0.0.1', 8081, 0.5)) {
             die("connect failed.");
         }
+        $data=['token'=>"webherobo1".time(),'platform'=>"app",'data'=>'hello world'];
+        $senddata=json_encode($data);
         //向服务器发送数据
-        if (!$client->send(['token'=>"webherobo1".time(),'platform'=>"app",'data'=>'hello world'])) {
+        if (!$client->send($senddata)) {
             echo ‘发送失败‘;
         }
         $interval=3;//每隔一定时间运行
