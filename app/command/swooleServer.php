@@ -406,7 +406,7 @@ class swooleServer extends Command
 
                     //bad_token 入库
 
-                    $redis->set("aur_bad_token_" . $tokenall, NOW_TIME + $time_length);
+                    $redis->set("aur_bad_token_" . $tokenall, time() + $time_length);
 
                     $max_num = 0; //这里很重要 就是 当 token 不对 时 $max_num
 
