@@ -304,7 +304,7 @@ class swooleServer extends Command
         $fd = json_decode($in_data, true)['fd'];
 
         $data = json_decode($in_data, true)['data'];
-
+        echo $data;
         if (!isset($data["token"]) || !isset($data["platform"])) {
 
             echo "缺少token或者platform";
