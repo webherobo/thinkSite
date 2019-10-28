@@ -497,7 +497,7 @@ class swooleServer extends Command
 
         echo "矫正ing....................................数据库查询\n";
 
-        $tunnel_info = true;//Db::connect($this->db_config)->table($prefix . "tunnel_user_package")->where(['id' => $tunnel_id])->find();
+        $tunnel_info = false;//Db::connect($this->db_config)->table($prefix . "tunnel_user_package")->where(['id' => $tunnel_id])->find();
 
         if (!$tunnel_info) {
 
