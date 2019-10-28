@@ -37,7 +37,8 @@ class SwooleBase extends BaseController
         $interval=3;//每隔一定时间运行
         do{
             $msg=date("Y-m-d H:i:s");
-            $client->send("你好：现在时间戳是".time()."时间是：".$msg."\n");
+            $senddata=json_encode(['code'=>0,'message'=>"你好：现在时间戳是".time()."时间是：".$msg."\n",'data'=>$data]);
+            $client->send();
             sleep($interval);//等待时间，进行下一次操作。
         }while(true);
         //从服务器接收数据
