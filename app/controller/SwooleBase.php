@@ -32,6 +32,12 @@ class SwooleBase extends BaseController
         if (!$client->send(['token'=>"webherobo1"+time(),'platform'=>"app",'data'=>'hello world'])) {
             echo ‘发送失败‘;
         }
+        $interval=3;//每隔一定时间运行
+        do{
+            $msg=date("Y-m-d H:i:s");
+            $client->send("你好：现在时间戳是".time()."时间是：".$msg."\n");
+            sleep($interval);//等待时间，进行下一次操作。
+        }while(true);
         //从服务器接收数据
         $data = $client->recv();
         if (!$data) {
@@ -39,12 +45,7 @@ class SwooleBase extends BaseController
         }
         echo $data;
 
-        $interval=3;//每隔一定时间运行
-        do{
-            $msg=date("Y-m-d H:i:s");
-            $client->send("你好：现在时间戳是".time()."时间是：".$msg."\n");
-            sleep($interval);//等待时间，进行下一次操作。
-        }while(true);
+
         //关闭连接
         $client->close();
     }
