@@ -469,7 +469,7 @@ class swooleServer extends Command
 
         echo "bad 过期时间是：{$expire}\n";
 
-        if ($expire > NOW_TIME) {//被锁了
+        if ($expire > time()) {//被锁了
 
             echo "{$bad_token_key}这token是个坏小子\n";
 
