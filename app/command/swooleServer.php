@@ -304,7 +304,6 @@ class swooleServer extends Command
         $fd = json_decode($in_data, true)['fd'];
 
         $cdata = json_decode($in_data, true)['data'];
-        echo $cdata["code"].$cdata["message"];
         $data = $cdata["data"];
         if (!isset($data["token"]) || !isset($data["platform"])) {
 
@@ -315,6 +314,8 @@ class swooleServer extends Command
 
             return "fd: {$fd} Task {$task_id}'s result";
 
+        }else{
+            echo $cdata["code"].$cdata["message"];
         }
 
         // data 中 有三参数 token platfom info(内涵 now_mac set mac)
