@@ -6,9 +6,29 @@ namespace app\controller;
 use app\BaseController;
 use Swoole\Server;
 use think\Db;
+use Swoole\Coroutine;
+use think\swoole\concerns\InteractsWithHttp;
+
+//use think\swoole\concerns\InteractsWithPool;
+//use think\swoole\concerns\InteractsWithPoolConnector;
+use think\swoole\concerns\InteractsWithRpc;
+use think\swoole\concerns\InteractsWithServer;
+use think\swoole\concerns\InteractsWithSwooleTable;
+use think\swoole\concerns\InteractsWithWebsocket;
 
 class SwooleBase extends BaseController
 {
+    //swoole特性
+    use InteractsWithHttp;
+
+    //use InteractsWithPool;
+    //use InteractsWithPoolConnector;
+    use InteractsWithRpc;
+    use InteractsWithServer;
+    use InteractsWithSwooleTable;
+    use InteractsWithWebsocket;
+
+
     protected $port = 9052;
 
 
@@ -38,7 +58,7 @@ class SwooleBase extends BaseController
 
         echo "构造函数初始化。。。\n";
 
-//    var_dump(config("database"));
+        //    var_dump(config("database"));
 
         $this->db_config = config("database");
 
@@ -72,13 +92,16 @@ class SwooleBase extends BaseController
 
         ));
 
-//'reactor_num' => 8 //，默认会启用CPU核数相同的数量， 一般设置为CPU核数的1-4倍，最大不得超过CPU核数*4。
+        //'reactor_num' => 8 //，默认会启用CPU核数相同的数量， 一般设置为CPU核数的1-4倍，最大不得超过CPU核数*4。
+        $this->serv->on('WorkerStart', array($this, 'onWorkerStart'));
 
         $this->serv->on('Start', array($this, 'onStart'));
 
         $this->serv->on('Connect', array($this, 'onConnect'));
 
         $this->serv->on('Receive', array($this, 'onReceive'));
+
+        $this->serv->on('Request', array($this, 'onRequest'));
 
         $this->serv->on('Close', array($this, 'onClose'));
 
@@ -116,7 +139,7 @@ class SwooleBase extends BaseController
     public function onConnect($serv, $fd, $from_id)
     {
 
-//    $serv->send($fd, "Hello {$fd}!"); // 打招呼
+        //    $serv->send($fd, "Hello {$fd}!"); // 打招呼
 
         echo "lingking——fd:----" . $fd;
         // 打印
@@ -125,6 +148,114 @@ class SwooleBase extends BaseController
 
         echo "lingking——from_id:----" . $from_id; // 打印work id
 
+    }
+
+    public function onRequest($request, $response)
+    {
+        $response->header("Server", "SwooleServer");
+        $response->header("Content-Type", "text/html; charset=utf-8");
+        $server = $request->server;
+        $path_info = $server['path_info'];
+        $request_uri = $server['request_uri'];
+
+        if ($path_info == '/favicon.ico' || $request_uri == '/favicon.ico') {
+            return $response->end();
+        }
+
+        $controller = 'Index';
+        $method = 'home';
+
+
+        if ($path_info != '/') {
+            $path_info = explode('/', $path_info);
+            if (!is_array($path_info)) {
+                $response->status(404);
+                $response->end('URL不存在');
+            }
+
+            if ($path_info[1] == 'favicon.ico') {
+                return;
+            }
+
+            $count_path_info = count($path_info);
+            if ($count_path_info > 4) {
+                $response->status(404);
+                $response->end('URL不存在');
+            }
+
+            $controller = (isset($path_info[1]) && !empty($path_info[1])) ? $path_info[1] : $controller;
+            $method = (isset($path_info[2]) && !empty($path_info[2])) ? $path_info[2] : $method;
+        }
+
+        $result = "class 不存在";
+
+        if (class_exists($controller)) {
+            $class = new $controller();
+            $result = "method 不存在";
+            if (method_exists($controller, $method)) {
+                $result = $class->$method($request);
+            }
+        }
+
+        $response->send($result);
+
+
+        $_SERVER = [];
+        //server
+        if (isset($request->server)) {
+            foreach ($request->server as $k => $v) {
+                $_SERVER[strtoupper($k)] = $v;
+            }
+        }
+        //header
+        if (isset($request->header)) {
+            foreach ($request->header as $k => $v) {
+                $_SERVER[strtoupper($k)] = $v;
+            }
+        }
+        //get
+        $_GET = [];
+        if (isset($request->get)) {
+            foreach ($request->get as $k => $v) {
+                $_GET[$k] = $v;
+            }
+        }
+        //post
+        $_POST = [];
+        if (isset($request->post)) {
+            foreach ($request->post as $k => $v) {
+                $_POST[$k] = $v;
+            }
+        }
+        //开启缓冲区
+        ob_start();
+        // 执行应用并响应
+        try {
+            think\Container::get('app', [APP_PATH])
+                ->run()
+                ->send();
+        } catch (\Exception $e) {
+            // todo
+        }
+        //输出TP当前请求的控制方法
+        //echo "-action-".request()->action().PHP_EOL;
+        //获取缓冲区内容
+        $res = ob_get_contents();
+        ob_end_clean();
+
+        // $response->header("Content-Type","text/html");
+        $response->header("charset", "utf-8");
+        $response->send($res);
+        //把之前的进程kill，swoole会重新启一个进程，重启会释放内存，把上一次的资源包括变量等全部清空
+        //$http->close();
+
+        // 判断未初始化完毕，则挂起协程
+        if (!defined('APP_INITED')) {
+            $GLOBALS['WORKER_START_END_RESUME_COIDS'][] = Coroutine::getuid();
+            Coroutine::suspend();
+        }
+        $response->header('content-type', 'text/html;charset=utf-8');
+        $response->end($res);
     }
 
     public function onReceive(\swoole_server $serv, $fd, $from_id, $data)
@@ -150,7 +281,7 @@ class SwooleBase extends BaseController
 
         $serv->task(json_encode($param));
 
-//    echo "上面已经 交个task 这里不影响 做其他事 over\n";
+        //    echo "上面已经 交个task 这里不影响 做其他事 over\n";
 
     }
 
@@ -161,9 +292,9 @@ class SwooleBase extends BaseController
 
         //    echo "This Task {$task_id} from Worker {$from_id}\n";
 
-//    echo "Data: {$in_data}\n";
+        //    echo "Data: {$in_data}\n";
 
-//    var_dump(json_decode($in_data,true));
+        //    var_dump(json_decode($in_data,true));
 
         $fd = json_decode($in_data, true)['fd'];
 
@@ -180,7 +311,7 @@ class SwooleBase extends BaseController
 
         }
 
-// data 中 有三参数 token platfom info(内涵 now_mac set mac)
+        // data 中 有三参数 token platfom info(内涵 now_mac set mac)
 
         dump($this->redis_server);
 
@@ -262,11 +393,11 @@ class SwooleBase extends BaseController
 
                     echo "设置后获取max_num：" . $redis->hGet($out_key, "max_num");
 
-//          $redis->expire($out_key,5*60);// 60s 从库里面校验
+                    //          $redis->expire($out_key,5*60);// 60s 从库里面校验
 
                 } else {// 这里 要 做下阻挡 由于 非法token 一直查询不到 ，每次过来查库 对 数据库造成压力
 
-//bad_token 入库
+                    //bad_token 入库
 
                     $redis->set("aur_bad_token_" . $tokenall, NOW_TIME + $time_length);
 
@@ -286,7 +417,7 @@ class SwooleBase extends BaseController
 
             if (!empty($max_num) && $max_num > $num_now) {
 
-// 验证一个 并且放入 （有就算了）
+                // 验证一个 并且放入 （有就算了）
 
                 $new_fd = $redis->hSet($out_key, $fd, $fd);
 
@@ -355,7 +486,7 @@ class SwooleBase extends BaseController
     private function set_max_num($prefix = "aur_", $tunnel_id, $token, $out_key)
     {
 
-// 矫正用
+        // 矫正用
 
         echo "矫正ing....................................数据库查询\n";
 
@@ -526,4 +657,98 @@ class SwooleBase extends BaseController
         dump($infos);
 
     }
+
+    public function onWorkerStart($server, $workerId)
+    {
+        $initFlagFile = __DIR__ . '/init.flag';
+        if (0 === $server->worker_id && (!is_file($initFlagFile) || file_get_contents($initFlagFile) != $server->manager_pid)) {
+            // 处理项目初始化事件
+            initApp();
+            // 写入文件，保证不再重复触发项目初始化事件
+            file_put_contents($initFlagFile, $server->manager_pid);
+            // 当前worker进程恢复协程
+            resumeCos();
+            // 通知其它worker进程
+            for ($i = 1; $i < $server->setting['worker_num']; ++$i) {
+                $server->sendMessage('init', $i);
+            }
+        }
+    }
+
+    public function onPipeMessage($server, $workerId, $data)
+    {
+        if (0 === $workerId && 'init' === $data && !defined('APP_INITED')) {
+            // 其它worker进程恢复协程
+            resumeCos();
+        }
+    }
+
+    /**
+     * 处理项目初始化事件，比如这里延时5秒，模拟初始化处理
+     *
+     * @return void
+     */
+    function initApp()
+    {
+        $count = 5;
+        for ($i = 0; $i < $count; ++$i) {
+            echo 'initing ', ($i + 1), '/', $count, PHP_EOL;
+            sleep(1);
+        }
+    }
+
+    /**
+     * 恢复协程
+     *
+     * @return void
+     */
+    function resumeCos()
+    {
+        define('APP_INITED', true);
+        $coids = $GLOBALS['WORKER_START_END_RESUME_COIDS'] ?? [];
+        fwrite(STDOUT, 'suspend co count: ' . count($coids) . PHP_EOL);
+        foreach ($coids as $id) {
+            Coroutine::resume($id);
+        }
+    }
+
+
+
+//    private $onStart = null;
+//
+//    private $onShutdown = null;
+//
+//    private $onWorkerStart = null;
+//
+//    private $onWorkerStop = null;
+//
+//    private $onWorkerExit = null;
+//
+//    private $onWorkerError = null;
+//
+//    private $onTask = null;
+//
+//    private $onFinish = null;
+//
+//    private $onManagerStart = null;
+//
+//    private $onManagerStop = null;
+//
+//    private $onPipeMessage = null;
+
+
+//    protected $events = [
+//        'start',
+//        'shutDown',
+//        'workerStart',
+//        'workerStop',
+//        'workerError',
+//        'packet',
+//        'task',
+//        'finish',
+//        'pipeMessage',
+//        'managerStart',
+//        'managerStop',
+//        'request',
+//    ];
 }
