@@ -25,7 +25,7 @@ class swooleServer extends Command
     {
         // 指令输出
         $output->writeln('swooleServer runing');
-        $this->app->swooleService->initServer();
+        $this->app->swooleService->serverSwoole();
 
     }
 
