@@ -709,20 +709,20 @@ class SwooleService extends \think\Service
 
     public function onWorkerStart($server, $workerId)
     {
-        $initFlagFile = __DIR__ . '/init.flag';
-        if (0 === $server->worker_id && (!is_file($initFlagFile) || file_get_contents($initFlagFile) != $server->manager_pid)) {
-            // 处理项目初始化事件
-            $this->initApp();
-            // 写入文件，保证不再重复触发项目初始化事件
-            file_put_contents($initFlagFile, $server->manager_pid);
-            // 当前worker进程恢复协程
-            $this->resumeCos();
-            // 通知其它worker进程
-            for ($i = 1; $i < $server->setting['worker_num']; ++$i) {
-                echo '通知恢复协程', PHP_EOL;
-                // $server->sendMessage('init', $i);
-            }
-        }
+//        $initFlagFile = __DIR__ . '/init.flag';
+//        if (0 === $server->worker_id && (!is_file($initFlagFile) || file_get_contents($initFlagFile) != $server->manager_pid)) {
+//            // 处理项目初始化事件
+//            $this->initApp();
+//            // 写入文件，保证不再重复触发项目初始化事件
+//            file_put_contents($initFlagFile, $server->manager_pid);
+//            // 当前worker进程恢复协程
+//            $this->resumeCos();
+//            // 通知其它worker进程
+//            for ($i = 1; $i < $server->setting['worker_num']; ++$i) {
+//                echo '通知恢复协程', PHP_EOL;
+//                // $server->sendMessage('init', $i);
+//            }
+//        }
     }
 
     public function onPipeMessage($server, $workerId, $data)
