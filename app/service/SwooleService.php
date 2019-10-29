@@ -61,9 +61,6 @@ class SwooleService extends \think\Service
      */
     public function boot()
     {
-        // 指令配置
-        $this->setName('swooleServer')
-            ->setDescription('the swooleServer command');
 
         /* 读取站点配置 */
 
