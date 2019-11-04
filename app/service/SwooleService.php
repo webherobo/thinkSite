@@ -10,6 +10,7 @@ use think\swoole\concerns\InteractsWithServer;
 use think\swoole\concerns\InteractsWithSwooleTable;
 use think\swoole\concerns\InteractsWithWebsocket;
 use swoole_client;
+use Swoole\Process;
 
 class SwooleService extends \think\Service
 {
@@ -798,4 +799,87 @@ class SwooleService extends \think\Service
 //        'managerStop',
 //        'request',
 //    ];
+}
+
+class MyProcess1
+{
+    public $mpid = 0; // master pid, 即当前程序的进程ID
+    public $works = []; // 记录子进程的 pid
+    public $maxProcessNum = 1;
+    public $newIndex = 0;
+
+    public function __construct()
+    {
+        try {
+            swoole_set_process_name(__CLASS__. ' : master');
+            $this->mpid = posix_getpid();
+            $this->run();
+            $this->processWait();
+        } catch (\Exception $e) {
+            die('Error: '. $e->getMessage());
+        }
+    }
+
+    public function run()
+    {
+        for ($i=0; $i<$this->maxProcessNum; $i++) {
+            $this->createProcess();
+        }
+    }
+
+    public function createProcess($index = null)
+    {
+        if (is_null($index)) {
+            $index = $this->newIndex;
+            $this->newIndex++;
+        }
+        $process = new Process(function (Process $worker) use($index) { // 子进程创建后需要执行的函数
+            swoole_set_process_name(__CLASS__. ": worker $index");
+            for ($j=0; $j<3; $j++) { // 模拟子进程执行耗时任务
+                $this->checkMpid($worker);
+                echo "msg: {$j}\n";
+                sleep(1);
+            }
+        }, false, false); // 不重定向输入输出; 不使用管道
+        $pid = $process->start();
+        $this->works[$index] = $pid;
+        return $pid;
+    }
+
+    // 主进程异常退出, 子进程工作完后退出
+    public function checkMpid(Process $worker) // demo中使用的引用, 引用表示传的参数可以被改变, 由于传入 $worker 是 \Swoole\Process 对象, 所以不用使用 &
+    {
+        if (!Process::kill($this->mpid, 0)) { // 0 可以用来检测进程是否存在
+            $worker->exit();
+            $msg = "master process exited, worker {$worker->pid} also quit\n"; // 需要写入到日志中
+            file_put_contents('process.log', $msg, FILE_APPEND); // todo: 这句话没有执行
+        }
+    }
+
+    // 重启子进程
+    public function rebootProcess($pid)
+    {
+        $index = array_search($pid, $this->works);
+        if ($index !== false) {
+            $newPid = $this->createProcess($index);
+            echo "rebootProcess: {$index}={$pid}->{$newPid} Done\n";
+            return;
+        }
+        throw new \Exception("rebootProcess error: no pid {$pid}");
+    }
+
+    // 自动重启子进程
+    public function processWait()
+    {
+        while (1) {
+            if (count($this->works)) {
+                $ret = Process::wait(); // 子进程退出
+                if ($ret) {
+                    $this->rebootProcess($ret['pid']);
+                }
+            } else {
+                break;
+            }
+        }
+    }
 }
