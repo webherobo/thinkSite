@@ -72,6 +72,7 @@ class ComposerStaticInit08b4b6552aaae49c95aa13b9dc91d4e5
         'aa53dcba601214d17ad405b7c291b7e8' => __DIR__ . '/..' . '/markbaker/matrix/classes/src/operations/multiply.php',
         '75c79eb1b25749b05a47976f32b0d8a2' => __DIR__ . '/..' . '/markbaker/matrix/classes/src/operations/divideby.php',
         '6ab8ad87a734f276a6bcd5a0fe1289be' => __DIR__ . '/..' . '/markbaker/matrix/classes/src/operations/divideinto.php',
+        'decc78cc4436b1292c6c0d151b19445c' => __DIR__ . '/..' . '/phpseclib/phpseclib/phpseclib/bootstrap.php',
         '1cfd2761b63b0a29ed23657ea394cb2d' => __DIR__ . '/..' . '/topthink/think-captcha/src/helper.php',
         'cc56288302d9df745d97c934d6a6e5f0' => __DIR__ . '/..' . '/topthink/think-queue/src/common.php',
         'af46dcea2921209ac30627b964175f13' => __DIR__ . '/..' . '/topthink/think-swoole/src/helpers.php',
@@ -86,6 +87,10 @@ class ComposerStaticInit08b4b6552aaae49c95aa13b9dc91d4e5
             'think\\migration\\' => 16,
             'think\\captcha\\' => 14,
             'think\\' => 6,
+        ),
+        'p' => 
+        array (
+            'phpseclib\\' => 10,
         ),
         'a' => 
         array (
@@ -199,6 +204,10 @@ class ComposerStaticInit08b4b6552aaae49c95aa13b9dc91d4e5
             3 => __DIR__ . '/..' . '/topthink/think-orm/src',
             4 => __DIR__ . '/..' . '/topthink/think-queue/src',
             5 => __DIR__ . '/..' . '/topthink/think-template/src',
+        ),
+        'phpseclib\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/phpseclib/phpseclib/phpseclib',
         ),
         'app\\' => 
         array (
