@@ -7,10 +7,11 @@ namespace Composer\Autoload;
 class ComposerStaticInit08b4b6552aaae49c95aa13b9dc91d4e5
 {
     public static $files = array (
-        '9b552a3cc426e3287cc811caefa3cf53' => __DIR__ . '/..' . '/topthink/think-helper/src/helper.php',
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
+        '9b552a3cc426e3287cc811caefa3cf53' => __DIR__ . '/..' . '/topthink/think-helper/src/helper.php',
         '0d59ee240a4cd96ddbb4ff164fccea4d' => __DIR__ . '/..' . '/symfony/polyfill-php73/bootstrap.php',
         '538ca81a9a966a6716601ecf48f4eaef' => __DIR__ . '/..' . '/opis/closure/functions.php',
+        '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
         '25072dd6e2470089de65ae7bf11d3109' => __DIR__ . '/..' . '/symfony/polyfill-php72/bootstrap.php',
         '667aeda72477189d0494fecd327c3641' => __DIR__ . '/..' . '/symfony/var-dumper/Resources/functions/dump.php',
         'ad155f8f1cf0d418fe49e248db8c661b' => __DIR__ . '/..' . '/react/promise/src/functions_include.php',
@@ -76,6 +77,7 @@ class ComposerStaticInit08b4b6552aaae49c95aa13b9dc91d4e5
         '1cfd2761b63b0a29ed23657ea394cb2d' => __DIR__ . '/..' . '/topthink/think-captcha/src/helper.php',
         'cc56288302d9df745d97c934d6a6e5f0' => __DIR__ . '/..' . '/topthink/think-queue/src/common.php',
         'af46dcea2921209ac30627b964175f13' => __DIR__ . '/..' . '/topthink/think-swoole/src/helpers.php',
+        '0ccdf99b8f62f02c52cba55802e0c2e7' => __DIR__ . '/..' . '/zircote/swagger-php/src/functions.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -109,8 +111,10 @@ class ComposerStaticInit08b4b6552aaae49c95aa13b9dc91d4e5
             'Symfony\\Polyfill\\Php73\\' => 23,
             'Symfony\\Polyfill\\Php72\\' => 23,
             'Symfony\\Polyfill\\Mbstring\\' => 26,
+            'Symfony\\Polyfill\\Ctype\\' => 23,
             'Symfony\\Contracts\\Translation\\' => 30,
             'Symfony\\Contracts\\Service\\' => 26,
+            'Symfony\\Component\\Yaml\\' => 23,
             'Symfony\\Component\\VarDumper\\' => 28,
             'Symfony\\Component\\Translation\\' => 30,
             'Symfony\\Component\\Process\\' => 26,
@@ -136,6 +140,7 @@ class ComposerStaticInit08b4b6552aaae49c95aa13b9dc91d4e5
         'O' => 
         array (
             'Opis\\Closure\\' => 13,
+            'OpenApi\\' => 8,
         ),
         'M' => 
         array (
@@ -233,6 +238,10 @@ class ComposerStaticInit08b4b6552aaae49c95aa13b9dc91d4e5
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
         ),
+        'Symfony\\Polyfill\\Ctype\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/polyfill-ctype',
+        ),
         'Symfony\\Contracts\\Translation\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/translation-contracts',
@@ -240,6 +249,10 @@ class ComposerStaticInit08b4b6552aaae49c95aa13b9dc91d4e5
         'Symfony\\Contracts\\Service\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/service-contracts',
+        ),
+        'Symfony\\Component\\Yaml\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/yaml',
         ),
         'Symfony\\Component\\VarDumper\\' => 
         array (
@@ -304,6 +317,10 @@ class ComposerStaticInit08b4b6552aaae49c95aa13b9dc91d4e5
         'Opis\\Closure\\' => 
         array (
             0 => __DIR__ . '/..' . '/opis/closure/src',
+        ),
+        'OpenApi\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/zircote/swagger-php/src',
         ),
         'Matrix\\' => 
         array (
