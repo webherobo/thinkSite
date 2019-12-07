@@ -14,7 +14,7 @@ class ElasticSearch extends BaseController
     public function __construct()
     {
         $params = array(
-            '127.0.0.1:9200'
+            '192.168.154.128:9200'
         );
         $this->client = ClientBuilder::create()->setHosts($params)->build();
     }
@@ -22,30 +22,33 @@ class ElasticSearch extends BaseController
     // 创建索引
     public function index() { // 只能创建一次
 
-        $r = $this->delete_index();
+        //$r = $this->delete_index();
 
-        $r = $this->create_index();  //1.创建索引
+        //$r = $this->create_index();  //1.创建索引
 
-        $r = $this->create_mappings(); //2.创建文档模板
+        //$r = $this->create_mappings(); //2.创建文档模板
 
 
-        $r = $this->get_mapping();
+       // $r = $this->get_mapping();
 
 
         $docs = [];
-        $docs[] = ['id'=>1,'name'=>'小明','profile'=>'我做的ui界面强无敌。','age'=>23];
+        $docs[] = ['id'=>1,'name'=>'小明','profile'=>'我做的ui界面强无敌。','age'=>23,'money'=>100];
         $docs[] = ['id'=>2,'name'=>'小张','profile'=>'我的php代码无懈可击。','age'=>24];
         $docs[] = ['id'=>3,'name'=>'小王','profile'=>'C的生活，快乐每一天。','age'=>29];
         $docs[] = ['id'=>4,'name'=>'小赵','profile'=>'就没有我做不出的前端页面。','age'=>26];
-        $docs[] = ['id'=>5,'name'=>'小吴','profile'=>'php是最好的语言。','job'=>21];
+        $docs[] = ['id'=>5,'name'=>'小吴','profile'=>'php是最好的语言。','job'=>22];
         $docs[] = ['id'=>6,'name'=>'小翁','profile'=>'别烦我，我正在敲bug呢！','age'=>25];
         $docs[] = ['id'=>7,'name'=>'小杨','profile'=>'为所欲为，不行就删库跑路','age'=>27];
+        $docs[] = ['id'=>8,'name'=>'小杨','profile'=>'8为所欲为，不行就删库跑路','age'=>27];
+        $docs[] = ['id'=>9,'name'=>'小杨','profile'=>'9为所欲为，不行就删库跑路','age'=>27];
 
         foreach ($docs as $k => $v) {
             $r = $this->add_doc($v['id'],$v);   //3.添加文档
         }
 
-        $r = $this->search_doc("删库 别烦我");  //4.搜索结果
+        $r = $this->search_doc("删库 php");  //4.搜索结果
+        var_dump($r);
     }
 
     // 创建索引
@@ -193,14 +196,15 @@ class ElasticSearch extends BaseController
     }
 
     // 查询文档 (分页，排序，权重，过滤)
-    public function search_doc($keywords = "运维",$index_name = "test_ik",$type_name = "users",$from = 0,$size = 2) {
+    public function search_doc($keywords = "运维",$index_name = "test_ik",$type_name = "users",$from = 0,$size = 10) {
         $params = [
             'index' => $index_name,
-            'type' => $type_name,
+
             'body' => [
                 'query' => [
                     'bool' => [
                         'should' => [
+                            [ 'match' => ['type' => $type_name]],
                             [ 'match' => [ 'profile' => [
                                 'query' => $keywords,
                                 'boost' => 3, // 权重大
