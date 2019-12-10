@@ -30,7 +30,8 @@
         "topthink/think-queue": "^3.0",
         "php-amqplib/php-amqplib": "^2.10",
         "elasticsearch/elasticsearch": "^7.3",
-        "zircote/swagger-php": "^3.0"
+        "zircote/swagger-php": "^3.0",
+        "league/oauth2-server": "^8.0"
     },
     "require-dev": {
         "symfony/var-dumper": "^4.2"
