@@ -4,7 +4,80 @@
 namespace app\controller;
 
 use app\BaseController;
-
+/**
+ * @OA\OpenApi(
+ *     @OA\Info(
+ *         version="1.0.0",
+ *         title="官网api文档",
+ *         description="官网api文档",
+ *         termsOfService="http://swagger.io/terms/",
+ *         @OA\Contact(
+ *          name="webherobo 开发支持",
+ *          email="webherobo@gmail.com"
+ *         ),
+ *         @OA\License(
+ *             name="Apache 2.0",
+ *             url="http://www.apache.org/licenses/LICENSE-2.0.html"
+ *         )
+ *     ),
+ *     @OA\Server(
+ *         description="官网OpenApi",
+ *         url="http://www.ansdistributor.com/api",
+ *         @OA\ServerVariable(
+ *          serverVariable="schema",
+ *          enum={"https", "http"},
+ *          default="https"
+ *        )
+ *     ),
+ *     @OA\Server(
+ *         description="官网OpenApi测试",
+ *         url="http://www.ansdistributor.com/testapi",
+ *         @OA\ServerVariable(
+ *          serverVariable="schema",
+ *          enum={"https", "http"},
+ *          default="https"
+ *        )
+ *     ),
+ *     @OA\ExternalDocumentation(
+ *         description="Find out more about Swagger",
+ *         url="http://swagger.io"
+ *     )
+ * )
+ *
+ * 参数的来源，必填，取值范围：query、header、path、formData、body
+ * 参数类型，取值范围：string、number、integer、boolean、array、file
+ *  text/plain; charset=utf-8|application/json|multipart/form-data
+ */
+/**
+ * @OA\Schema(
+ *      schema="UploadFileModel",
+ *      @OA\Property(
+ *          property="file_name",
+ *          type="string",
+ *          description="文件名，不包含路径"
+ *      ),
+ *      @OA\Property(
+ *          property="file_path",
+ *          type="string",
+ *          description="文件路径"
+ *      ),
+ *      @OA\Property(
+ *          property="file_url",
+ *          type="string",
+ *          description="URL链接，用于展示"
+ *      ),
+ *      @OA\Property(
+ *          property="file_size",
+ *          type="string",
+ *          description="文件大小，单位B"
+ *      ),
+ *      @OA\Property(
+ *          property="extension",
+ *          type="string",
+ *          description="文件扩展名"
+ *      )
+ * )
+ */
 class ApiBase extends BaseController
 {
 
@@ -66,5 +139,85 @@ class ApiBase extends BaseController
 
         ];
         return in_array($code,$codeArray)?$codeArray[$code]:$codeArray[0];
+    }
+    /**
+     *
+     * @OA\SecurityScheme(type="apiKey",securityScheme="apikey",name="apikey")
+     * @OA\Post(
+     *     tags={"教育站点api"},
+     *     path="/website/test/index",
+     *     summary="测试接口",
+     *     @OA\Parameter(name="firstname",in="query",@OA\Schema(type="string"),description="名字",example="hero"),
+     *     @OA\Parameter(name="lastname",in="query",@OA\Schema(type="string"),description="姓氏",example="cheng"),
+     *     security={{"apikey"={}}},
+     *     @OA\RequestBody(required=true,description="body",content={
+     *     @OA\MediaType(mediaType="multipart/form-data",
+     *     @OA\Schema(
+     *     required={"upload_file"},
+     *     @OA\Property(
+     *        property="username",
+     *        type="string",
+     *        default="webherobo",
+     *        example="hero"
+     *     ),
+     *     @OA\Property(
+     *        property="password",
+     *        type="string",
+     *        default="admin123"
+     *     ),
+     *     @OA\Property(
+     *        property="sex",
+     *        type="integer",
+     *        example=0
+     *     ),
+     *      @OA\Property(
+     *        property="upload_file",
+     *        type="file",
+     *        description="上传文件"
+     *     ),
+     * )),
+     *    @OA\MediaType(mediaType="application/json",
+     *     @OA\Schema(
+     *     required={"upload_file"},
+     *     @OA\Property(
+     *        property="username",
+     *        type="string",
+     *        default="webherobo",
+     *        example="hero"
+     *     ),
+     *     @OA\Property(
+     *        property="password",
+     *        type="string",
+     *        default="admin123"
+     *     ),
+     *     @OA\Property(
+     *        property="sex",
+     *        type="integer",
+     *        example=0
+     *     ),
+     * )),
+     * }
+     * ),
+     *     @OA\Response(
+     *     response=200,
+     *     description="ok",
+     *     @OA\JsonContent(ref="#/components/schemas/UploadFileModel")
+     * )
+     * )
+     */
+    public function testapi(){
+
+    }
+    public function index(){
+        $path = app()->getRootPath().'/app'; //你想要哪个文件夹下面的注释生成对应的API文档
+        $openapi = \OpenApi\scan($path);
+        //header('Content-Type: application/x-yaml');
+        // header('Content-Type: application/json');
+        // echo $swagger;
+        $swagger_json_path = app()->getRootPath().'/public/static/swagger-ui/swagger.json';
+        $res = file_put_contents($swagger_json_path, $openapi->toJson());
+        if ($res == true) {
+            $this->redirect('/static/swagger-ui/dist/index.html');
+        }
     }
 }

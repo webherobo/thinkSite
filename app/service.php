@@ -4,6 +4,6 @@ return [
     '\app\service\FileSystemService',
     '\app\service\PhpOfficeService',
     '\app\service\LockService',
-    '\app\service\RabbitMqService',
-    '\app\service\SwooleService',
+    //'\app\service\RabbitMqService',
+    //'\app\service\SwooleService',
 ];
